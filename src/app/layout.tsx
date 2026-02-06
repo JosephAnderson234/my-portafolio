@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { WindowManagerProvider } from "src/context/WindowManagerContext";
 
 export const metadata: Metadata = {
   title: "Joseph Cosa - Portfolio",
@@ -12,9 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className="bg-black text-white overflow-hidden">
-        {children}
+        <WindowManagerProvider>
+          {children}
+        </WindowManagerProvider>
+
       </body>
     </html>
   );

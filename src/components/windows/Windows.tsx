@@ -1,39 +1,66 @@
 "use client";
 
 import { Rnd } from "react-rnd";
-import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 type Props = {
     title: string;
-    children: React.ReactNode;
+    children: ReactNode;
+    isActive: boolean;
     onClose: () => void;
+    onFocus: () => void;
+    defaultSize?: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
 };
 
-export default function Window({ title, children, onClose }: Props) {
+export default function Window({
+    title,
+    children,
+    isActive,
+    onClose,
+    onFocus,
+    defaultSize = { x: 120, y: 120, width: 520, height: 320 },
+}: Props) {
     return (
         <Rnd
-            default={{
-                x: 100,
-                y: 100,
-                width: 500,
-                height: 300,
-            }}
+            default={defaultSize}
             bounds="window"
+            onMouseDown={onFocus}
+            className={`z-${isActive ? 50 : 10}`}
         >
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="bg-zinc-900 border border-zinc-700 rounded-md shadow-xl flex flex-col"
+            <div
+                className={`h-full flex flex-col rounded-md shadow-xl border transition
+          ${isActive
+                        ? "border-zinc-300 bg-zinc-900"
+                        : "border-zinc-700 bg-zinc-900/80"}
+        `}
             >
-                <div className="flex items-center justify-between bg-zinc-800 px-3 py-1">
+                {/* Title bar */}
+                <div
+                    onMouseDown={onFocus}
+                    className={`h-8 flex items-center justify-between px-3 cursor-move select-none
+            ${isActive ? "bg-zinc-800" : "bg-zinc-800/70"}
+          `}
+                >
                     <span className="text-sm">{title}</span>
-                    <button onClick={onClose}>✕</button>
+
+                    <button
+                        onClick={onClose}
+                        className="text-zinc-400 hover:text-white"
+                    >
+                        ✕
+                    </button>
                 </div>
 
-                <div className="p-3 overflow-auto flex-1">
+                {/* Content */}
+                <div className="flex-1 overflow-auto p-3 font-mono text-sm">
                     {children}
                 </div>
-            </motion.div>
+            </div>
         </Rnd>
     );
 }

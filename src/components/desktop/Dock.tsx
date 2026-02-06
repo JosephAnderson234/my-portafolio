@@ -1,40 +1,37 @@
 "use client";
 
-import { useWindowManager } from "src/hooks/useWindowManager";
+import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
+
+const apps: { id: WindowType; icon: string; label: string }[] = [
+    { id: "terminal", icon: "💻", label: "Terminal" },
+    { id: "about", icon: "👤", label: "About" },
+    { id: "projects", icon: "📁", label: "Projects" },
+    { id: "skills", icon: "🛠️", label: "Skills" },
+];
 
 export default function Dock() {
-    const { open } = useWindowManager();
+    const { open, focus, windows } = useWindowManager();
 
     return (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-zinc-900/80 backdrop-blur border border-zinc-700 rounded-xl px-4 py-2 flex gap-4 shadow-lg">
-            <DockButton label="Terminal" icon="💻" onClick={() => open("terminal")} />
-            <DockButton label="About" icon="👤" onClick={() => open("about")} />
-            <DockButton label="Projects" icon="📁" onClick={() => open("projects")} />
-            <DockButton label="Skills" icon="🛠️" onClick={() => open("skills")} />
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-zinc-900/80 backdrop-blur border border-zinc-700 rounded-xl px-4 py-2 flex gap-4">
+            {apps.map((app) => {
+                const isOpen = windows.some((w) => w.id === app.id);
+                const isActive = windows.find((w) => w.id === app.id)?.isActive;
+
+                return (
+                    <button
+                        key={app.id}
+                        onClick={() => (isOpen ? focus(app.id) : open(app.id))}
+                        className={`flex flex-col items-center gap-1 transition ${isActive ? "text-white" : "text-zinc-400"
+                            }`}
+                    >
+                        <span className="text-2xl">{app.icon}</span>
+                        {isOpen && (
+                            <span className="w-1 h-1 rounded-full bg-white" />
+                        )}
+                    </button>
+                );
+            })}
         </div>
-    );
-}
-
-function DockButton({
-    icon,
-    label,
-    onClick,
-}: {
-    icon: string;
-    label: string;
-    onClick: () => void;
-}) {
-    return (
-        <button
-            onClick={onClick}
-            className="group flex flex-col items-center gap-1 text-zinc-300 hover:text-white transition"
-        >
-            <div className="text-2xl group-hover:scale-110 transition-transform">
-                {icon}
-            </div>
-            <span className="text-[10px] opacity-0 group-hover:opacity-100 transition">
-                {label}
-            </span>
-        </button>
     );
 }
