@@ -1,3 +1,6 @@
+import profileData from "src/data/profile.json";
+import projectsData from "src/data/projects.json";
+
 export function runCommand(cmd: string): string[] {
     switch (cmd) {
         case "help":
@@ -11,17 +14,13 @@ export function runCommand(cmd: string): string[] {
             ];
 
         case "whoami":
-            return ["juan - frontend developer"];
+            return [`${profileData.name} - ${profileData.role}`];
 
         case "ls":
             return ["about.txt  projects/  skills.md"];
 
         case "projects":
-            return [
-                "• Linux Desktop Portfolio",
-                "• Ecommerce App",
-                "• CLI Interface Generator",
-            ];
+            return projectsData.map((project) => `- ${project.title}`);
 
         case "clear":
             return [];

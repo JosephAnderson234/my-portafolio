@@ -1,0 +1,17 @@
+{
+  "name": "Joseph Cosa",
+  "role": "Frontend Developer",
+  "tagline": "Building polished web experiences with a Linux-first workflow.",
+  "location": "Lima, Peru",
+  "email": "hello@example.com",
+  "links": [
+    {
+      "label": "GitHub",
+      "url": "https://github.com"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://linkedin.com"
+    }
+  ]
+}

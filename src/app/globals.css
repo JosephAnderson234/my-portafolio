@@ -1,1 +1,92 @@
 @import "tailwindcss";
+
+:root {
+	--hypr-bg: #07090d;
+	--hypr-bg-soft: #0f141d;
+	--hypr-surface: rgba(11, 16, 24, 0.55);
+	--hypr-surface-strong: rgba(9, 14, 21, 0.78);
+	--hypr-border: rgba(176, 232, 255, 0.22);
+	--hypr-border-active: rgba(111, 242, 255, 0.7);
+	--hypr-text: #e6f5ff;
+	--hypr-text-muted: #93a8bd;
+	--hypr-accent: #76f7f7;
+	--hypr-accent-2: #92ff9f;
+	--hypr-glow: 0 0 0 1px rgba(109, 255, 245, 0.25), 0 10px 40px rgba(0, 13, 22, 0.65);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background:
+		radial-gradient(140% 120% at 110% -10%, rgba(130, 247, 255, 0.2), transparent 45%),
+		radial-gradient(120% 100% at -5% 105%, rgba(137, 255, 163, 0.15), transparent 44%),
+		linear-gradient(165deg, #05070b 0%, #0a1119 40%, #070b11 100%);
+	color: var(--hypr-text);
+}
+
+.desktop-root {
+	position: relative;
+	width: 100vw;
+	height: 100dvh;
+	overflow: hidden;
+}
+
+.hypr-panel,
+.hypr-dock,
+.hypr-window {
+	border: 1px solid var(--hypr-border);
+	background: var(--hypr-surface);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow: var(--hypr-glow);
+}
+
+.hypr-panel {
+	border-radius: 0 0 14px 14px;
+}
+
+.hypr-dock {
+	border-radius: 18px;
+}
+
+.hypr-window {
+	border-radius: 14px;
+}
+
+.hypr-active-outline {
+	border-color: var(--hypr-border-active);
+}
+
+.wallpaper-grain {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0.18;
+	background-image: radial-gradient(rgba(195, 251, 255, 0.35) 0.45px, transparent 0.45px);
+	background-size: 3px 3px;
+	mix-blend-mode: soft-light;
+}
+
+@keyframes hyprPulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 0.8;
+	}
+	50% {
+		transform: scale(1.2);
+		opacity: 1;
+	}
+}
+
+.hypr-pulse {
+	animation: hyprPulse 1.9s ease-in-out infinite;
+}

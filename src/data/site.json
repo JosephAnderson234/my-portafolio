@@ -1,0 +1,7 @@
+{
+  "desktopName": "nix-shell",
+  "panelUser": "joseph",
+  "panelHost": "nixos",
+  "terminalPrompt": "joseph@nixos:~$",
+  "panelTitle": "Hyprland Session"
+}
