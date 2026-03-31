@@ -3,5 +3,6 @@
   "panelUser": "joseph",
   "panelHost": "nixos",
   "terminalPrompt": "joseph@nixos:~$",
-  "panelTitle": "Hyprland Session"
+  "panelTitle": "Hyprland Session",
+  "version": "25.03"
 }

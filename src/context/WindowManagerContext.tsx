@@ -6,7 +6,8 @@ export type WindowType =
     | "terminal"
     | "about"
     | "projects"
-    | "skills";
+    | "skills"
+    | "experience";
 
 type WindowState = {
     id: WindowType;
@@ -31,8 +32,13 @@ export function WindowManagerProvider({
 
     const open = (id: WindowType) => {
         setWindows((prev) => {
-            if (prev.find((w) => w.id === id)) return prev;
-            return [...prev, { id, isActive: true }];
+            if (prev.find((w) => w.id === id)) {
+                return prev.map((w) => ({ ...w, isActive: w.id === id }));
+            }
+            return [
+                ...prev.map((w) => ({ ...w, isActive: false })),
+                { id, isActive: true },
+            ];
         });
     };
 

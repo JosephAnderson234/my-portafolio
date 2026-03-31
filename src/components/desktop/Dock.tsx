@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { ComponentType } from "react";
 import {
+    IconBriefcase,
     IconFolderCode,
     IconTerminal2,
     IconTool,
@@ -12,8 +13,9 @@ import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
 
 const apps: { id: WindowType; icon: ComponentType<{ size?: number; stroke?: number }>; label: string }[] = [
     { id: "terminal", icon: IconTerminal2, label: "Terminal" },
-    { id: "about", icon: IconUserCircle, label: "About" },
+    { id: "about", icon: IconUserCircle, label: "About Me" },
     { id: "projects", icon: IconFolderCode, label: "Projects" },
+    { id: "experience", icon: IconBriefcase, label: "Experience" },
     { id: "skills", icon: IconTool, label: "Skills" },
 ];
 

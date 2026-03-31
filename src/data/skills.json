@@ -1,0 +1,24 @@
+{
+  "categories": [
+    {
+      "name": "Frontend",
+      "color": "cyan",
+      "skills": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Vue.js"]
+    },
+    {
+      "name": "Backend",
+      "color": "emerald",
+      "skills": ["Node.js", "Express", "PostgreSQL", "Prisma", "REST APIs", "GraphQL"]
+    },
+    {
+      "name": "DevOps & Tools",
+      "color": "violet",
+      "skills": ["Linux", "Docker", "Git", "GitHub Actions", "Vercel", "Neon DB"]
+    },
+    {
+      "name": "Other",
+      "color": "amber",
+      "skills": ["Figma", "TDD", "Clean Architecture", "Agile/Scrum"]
+    }
+  ]
+}
