@@ -9,7 +9,7 @@ export default function Terminal() {
     const prompt = siteData.terminalPrompt;
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    const [history, setHistory] = useState<{ type: "input" | "output"; text: string }[]>([
+    const [outputHistory, setOutputHistory] = useState<{ type: "input" | "output"; text: string }[]>([
         { type: "output", text: `Welcome to ${siteData.desktopName} — ${siteData.version}` },
         { type: "output", text: `${profileData.name} · ${profileData.role}` },
         { type: "output", text: `Type 'help' for available commands.` },
@@ -21,7 +21,7 @@ export default function Terminal() {
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [history]);
+    }, [outputHistory]);
 
     const execute = () => {
         const command = input.trim();
@@ -34,14 +34,14 @@ export default function Terminal() {
         if (!command) return;
 
         if (command === "clear") {
-            setHistory([]);
+            setOutputHistory([]);
             setInput("");
             return;
         }
 
         const output = runCommand(command);
 
-        setHistory((prev) => [
+        setOutputHistory((prev) => [
             ...prev,
             { type: "input", text: command },
             ...output.map((line) => ({ type: "output" as const, text: line })),
@@ -71,7 +71,7 @@ export default function Terminal() {
             style={{ fontFamily: "var(--font-mono)" }}
         >
             <div className="flex-1 overflow-auto space-y-0.5">
-                {history.map((entry, i) => (
+                {outputHistory.map((entry, i) => (
                     <div key={i} className="leading-5">
                         {entry.type === "input" ? (
                             <div className="flex gap-2">

@@ -11,7 +11,7 @@ export function getNeonClient() {
 
   if (!connectionString) {
     throw new Error(
-      "NEON_DATABASE_URL is not configured. Set this env variable to connect to your Neon DB."
+      "NEON_DATABASE_URL is not configured. Add this variable to your .env.local file or deployment environment variables."
     );
   }
 

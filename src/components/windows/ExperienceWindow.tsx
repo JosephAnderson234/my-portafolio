@@ -25,6 +25,13 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
+function formatDateRange(startDate: string, endDate: string | undefined, current: boolean): string {
+  const start = formatDate(startDate);
+  if (current) return `${start} — Present`;
+  if (endDate) return `${start} — ${formatDate(endDate)}`;
+  return start;
+}
+
 export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) {
   const [experience, setExperience] = useState<ExperienceSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +103,7 @@ export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) 
                     <div className="mb-3 flex flex-wrap gap-3 text-xs text-slate-400">
                       <span className="flex items-center gap-1">
                         <IconCalendar size={12} stroke={2} />
-                        {formatDate(exp.start_date)} — {exp.current ? "Present" : exp.end_date ? formatDate(exp.end_date) : ""}
+                        {formatDateRange(exp.start_date, exp.end_date, exp.current)}
                       </span>
                       <span className="flex items-center gap-1">
                         <IconMapPin size={12} stroke={2} />
