@@ -1,99 +1,101 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { runCommand } from "src/libs/terminalCommands";
 import siteData from "src/data/site.json";
 import profileData from "src/data/profile.json";
 
 export default function Terminal() {
     const prompt = siteData.terminalPrompt;
+    const bottomRef = useRef<HTMLDivElement>(null);
 
-    const treeFiles = {
-        "home": {
-            "projects": [
-                "project1.md",
-                "project2.md",
-                "project3.md",
-            ],
-            "experiences": [
-                "javascript.md",
-                "react.md",
-                "nextjs.md",
-            ],
-        },
-    }
-
-    const [history, setHistory] = useState<string[]>([
-        `${prompt} whoami`,
-        `${profileData.name} - ${profileData.role}`,
+    const [outputHistory, setOutputHistory] = useState<{ type: "input" | "output"; text: string }[]>([
+        { type: "output", text: `Welcome to ${siteData.desktopName} — ${siteData.version}` },
+        { type: "output", text: `${profileData.name} · ${profileData.role}` },
+        { type: "output", text: `Type 'help' for available commands.` },
+        { type: "output", text: "" },
     ]);
-    const [, setCurrentPath] = useState<string[]>(["home"]);
     const [input, setInput] = useState("");
+    const [cmdHistory, setCmdHistory] = useState<string[]>([]);
+    const [historyIndex, setHistoryIndex] = useState(-1);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [outputHistory]);
 
     const execute = () => {
         const command = input.trim();
+
+        if (command) {
+            setCmdHistory((prev) => [command, ...prev]);
+            setHistoryIndex(-1);
+        }
+
         if (!command) return;
 
         if (command === "clear") {
-            setHistory([]);
-            setInput("");
-            return;
-        }
-
-        if (command.startsWith("cd ")) {
-            const path = command.slice(3).trim();
-            const parts = path.split("/").filter(Boolean);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let node: any = treeFiles;
-            for (const part of parts) {
-                if (node[part]) {
-                    node = node[part];
-                } else {
-                    setHistory((prev) => [
-                        ...prev,
-                        `${prompt} ${command}`,
-                        `bash: cd: ${path}: No such file or directory`,
-                    ]);
-                    setInput("");
-                    return;
-                }
-            }
-            setCurrentPath(parts);
-            setHistory((prev) => [
-                ...prev,
-                `${prompt} ${command}`,
-            ]);
+            setOutputHistory([]);
             setInput("");
             return;
         }
 
         const output = runCommand(command);
 
-        setHistory((prev) => [
+        setOutputHistory((prev) => [
             ...prev,
-            `${prompt} ${command}`,
-            ...output,
+            { type: "input", text: command },
+            ...output.map((line) => ({ type: "output" as const, text: line })),
         ]);
-
         setInput("");
     };
 
-    return (
-        <div className="h-full rounded-lg border border-cyan-100/10 bg-slate-950/28 p-2 text-slate-100">
-            {history.map((line, i) => (
-                <div key={i} className="leading-6">
-                    {line}
-                </div>
-            ))}
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            execute();
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const next = Math.min(historyIndex + 1, cmdHistory.length - 1);
+            setHistoryIndex(next);
+            setInput(cmdHistory[next] ?? "");
+        } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const next = Math.max(historyIndex - 1, -1);
+            setHistoryIndex(next);
+            setInput(next === -1 ? "" : cmdHistory[next] ?? "");
+        }
+    };
 
-            <div className="mt-1 flex items-center">
-                <span className="mr-2 text-cyan-200">{prompt}</span>
+    return (
+        <div
+            className="flex h-full flex-col rounded-lg border border-cyan-100/10 bg-slate-950/40 p-3"
+            style={{ fontFamily: "var(--font-mono)" }}
+        >
+            <div className="flex-1 overflow-auto space-y-0.5">
+                {outputHistory.map((entry, i) => (
+                    <div key={i} className="leading-5">
+                        {entry.type === "input" ? (
+                            <div className="flex gap-2">
+                                <span className="shrink-0 text-cyan-300">{prompt}</span>
+                                <span className="text-slate-100">{entry.text}</span>
+                            </div>
+                        ) : (
+                            <span className="text-slate-400">{entry.text}</span>
+                        )}
+                    </div>
+                ))}
+                <div ref={bottomRef} />
+            </div>
+
+            <div className="mt-2 flex items-center gap-2 border-t border-white/8 pt-2">
+                <span className="shrink-0 text-cyan-300">{prompt}</span>
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && execute()}
+                    onKeyDown={handleKeyDown}
                     autoFocus
-                    className="flex-1 bg-transparent text-slate-50 outline-none"
+                    className="flex-1 bg-transparent text-slate-50 outline-none caret-cyan-400"
+                    spellCheck={false}
+                    autoComplete="off"
                 />
             </div>
         </div>

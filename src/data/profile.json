@@ -1,17 +1,14 @@
 {
-  "name": "Joseph Cosa",
-  "role": "Frontend Developer",
-  "tagline": "Building polished web experiences with a Linux-first workflow.",
-  "location": "Lima, Peru",
-  "email": "hello@example.com",
+  "name": "Joseph Anderson",
+  "role": "Full Stack Developer",
+  "tagline": "Crafting pixel-perfect web experiences with modern tools and a Linux-first workflow.",
+  "bio": "I'm a Full Stack Developer passionate about building performant, accessible, and beautiful web applications. I love open-source, CLI tools, and everything that runs on Linux.",
+  "location": "Lima, Perú",
+  "email": "joseph@example.com",
+  "avatar": "/avatar.png",
   "links": [
-    {
-      "label": "GitHub",
-      "url": "https://github.com"
-    },
-    {
-      "label": "LinkedIn",
-      "url": "https://linkedin.com"
-    }
+    { "label": "GitHub", "url": "https://github.com/JosephAnderson234", "icon": "github" },
+    { "label": "LinkedIn", "url": "https://linkedin.com/in/joseph-anderson", "icon": "linkedin" },
+    { "label": "Twitter", "url": "https://twitter.com/joseph_dev", "icon": "twitter" }
   ]
 }

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+	--font-ui: "Space Grotesk", "Inter", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 	--hypr-bg: #07090d;
 	--hypr-bg-soft: #0f141d;
 	--hypr-surface: rgba(11, 16, 24, 0.55);
