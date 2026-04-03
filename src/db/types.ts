@@ -33,4 +33,5 @@ export interface ProfileSummary {
   bio: string;
   location?: string;
   email?: string;
+  phone?: string;
 }

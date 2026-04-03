@@ -3,17 +3,19 @@ import skillsData from "src/data/skills.json";
 
 // Projects and experience are mocked here for the terminal (same mock as repositories)
 const PROJECTS_MOCK = [
-  { title: "Linux Desktop Portfolio", status: "in-progress" },
-  { title: "Ecommerce Platform", status: "released" },
-  { title: "CLI Interface Generator", status: "planned" },
-  { title: "Dev Blog", status: "released" },
-  { title: "Realtime Chat App", status: "released" },
+    { title: "Sistema de Compras + Landing", status: "released" },
+    { title: "Ecosistema Web del Club de Software Libre", status: "in-progress" },
+    { title: "Frontend con API Gateway + JWT", status: "released" },
+    { title: "Apps en Tiempo Real con WebSockets", status: "released" },
+    { title: "Portfolio Interactivo Estilo Linux", status: "in-progress" },
 ];
 
 const EXPERIENCE_MOCK = [
-  { role: "Senior Frontend Developer", company: "TechCorp Solutions", current: true },
-  { role: "Full Stack Developer", company: "StartupXYZ", current: false },
-  { role: "Web Developer", company: "Freelance", current: false },
+    { role: "Director de Sistemas", company: "Club de Software Libre - UTEC", current: true },
+    { role: "Asistente de Catedra y Laboratorio - Programacion II", company: "UTEC", current: true },
+    { role: "Desarrollador Full Stack", company: "Maftech S.A.C.", current: false },
+    { role: "Miembro del Area Tecnica", company: "Club de Software Libre - UTEC", current: false },
+    { role: "Desarrollador Independiente", company: "Proyectos Personales", current: true },
 ];
 
 export function runCommand(cmd: string): string[] {
@@ -39,6 +41,7 @@ export function runCommand(cmd: string): string[] {
                 `  Role:     ${profileData.role}`,
                 `  Location: ${profileData.location}`,
                 `  Email:    ${profileData.email}`,
+                `  Phone:    ${profileData.phone ?? "N/A"}`,
                 `  ${profileData.tagline}`,
             ];
 

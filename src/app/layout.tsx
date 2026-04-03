@@ -3,8 +3,8 @@ import "./globals.css";
 import { WindowManagerProvider } from "src/context/WindowManagerContext";
 
 export const metadata: Metadata = {
-  title: "Joseph Anderson - Portfolio",
-  description: "Portfolio of Joseph Anderson, a Full Stack Developer.",
+  title: "Joseph Anderson Cose Rojas - Portfolio",
+  description: "Portfolio de Joseph Anderson Cose Rojas, Desarrollador Full Stack.",
 };
 
 export default function RootLayout({

@@ -3,22 +3,22 @@
     {
       "name": "Frontend",
       "color": "cyan",
-      "skills": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Vue.js"]
+      "skills": ["React", "Next.js", "JavaScript", "TypeScript", "HTML", "CSS"]
     },
     {
       "name": "Backend",
       "color": "emerald",
-      "skills": ["Node.js", "Express", "PostgreSQL", "Prisma", "REST APIs", "GraphQL"]
+      "skills": ["Node.js", "Spring Boot", "Java", "PostgreSQL", "REST APIs", "WebSockets", "JWT", "Spring Security"]
     },
     {
-      "name": "DevOps & Tools",
+      "name": "Cloud & DevOps",
       "color": "violet",
-      "skills": ["Linux", "Docker", "Git", "GitHub Actions", "Vercel", "Neon DB"]
+      "skills": ["AWS S3", "AWS EC2", "AWS Lambda", "AWS API Gateway", "AWS DynamoDB", "Docker", "Vercel"]
     },
     {
-      "name": "Other",
+      "name": "Tools & Languages",
       "color": "amber",
-      "skills": ["Figma", "TDD", "Clean Architecture", "Agile/Scrum"]
+      "skills": ["Git", "GitHub", "Postman", "Python", "C++", "Español nativo", "Inglés básico"]
     }
   ]
 }

@@ -7,6 +7,7 @@ import {
   IconBrandTwitter,
   IconMapPin,
   IconMail,
+  IconPhone,
   IconUser,
 } from "@tabler/icons-react";
 import Window from "./Windows";
@@ -90,6 +91,12 @@ export default function AboutWindow({ isActive, onClose, onFocus }: Props) {
             <IconMail size={13} stroke={2} className="text-cyan-300" />
             {profileData.email}
           </span>
+          {profileData.phone && (
+            <span className="flex items-center gap-1.5 rounded-md border border-white/10 bg-slate-900/40 px-3 py-1.5 text-xs text-slate-300">
+              <IconPhone size={13} stroke={2} className="text-cyan-300" />
+              {profileData.phone}
+            </span>
+          )}
         </motion.div>
 
         {/* Links */}
