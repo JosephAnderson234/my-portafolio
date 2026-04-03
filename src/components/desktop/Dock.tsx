@@ -24,10 +24,10 @@ export default function Dock() {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: -24 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
-            className="hypr-dock absolute left-1/2 top-13 z-40 -translate-x-1/2 px-3 py-2 sm:top-14 sm:px-4 sm:py-2"
+            className="hypr-dock absolute bottom-3 left-1/2 z-40 -translate-x-1/2 px-3 py-2 sm:bottom-4 sm:px-4 sm:py-2"
         >
             <div className="flex gap-1.5 sm:gap-3">
             {apps.map((app) => {

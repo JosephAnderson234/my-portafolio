@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Rnd } from "react-rnd";
 import { ReactNode } from "react";
+import { IconX } from "@tabler/icons-react";
 
 type Props = {
     title: string;
@@ -62,9 +63,11 @@ export default function Window({
 
                     <button
                         onClick={onClose}
-                        className="rounded-md border border-white/10 px-2 py-0.5 text-slate-300 transition-colors hover:border-cyan-100/40 hover:text-cyan-100"
+                        className="rounded-md border border-white/10 p-1 text-slate-300 transition-colors hover:border-cyan-100/40 hover:text-cyan-100"
+                        title="Close window"
+                        aria-label="Close window"
                     >
-                        close
+                        <IconX size={14} stroke={2.2} />
                     </button>
                 </div>
 

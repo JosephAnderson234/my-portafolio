@@ -55,7 +55,7 @@ const MOCK_EXPERIENCE: ExperienceSummary[] = [
   },
   {
     id: 4,
-    company: "Club de Software Libre - UTEC",
+    company: "Cachimbo - UTEC",
     role: "Miembro del Area Tecnica",
     start_date: "2024-01",
     end_date: "2025-12",
