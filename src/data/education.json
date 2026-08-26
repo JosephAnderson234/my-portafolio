@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "institution": "Universidad de Ingeniería y Tecnología (UTEC)",
+      "degree": "Ciencias de la Computación",
+      "period": "Abril 2024 – Noviembre 2029 (en curso)",
+      "location": "Lima, Perú"
+    },
+    {
+      "institution": "COAR Lima Provincias",
+      "degree": "Diploma de Bachillerato Internacional (IB), Tercio Superior",
+      "period": "Marzo 2021 – Diciembre 2023",
+      "location": "Lima, Perú"
+    }
+  ]
+}

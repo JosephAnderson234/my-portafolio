@@ -8,6 +8,8 @@ import TerminalWindow from "../windows/TerminalWindows";
 import AboutWindow from "../windows/AboutWindow";
 import ProjectsWindow from "../windows/ProjectsWindow";
 import ExperienceWindow from "../windows/ExperienceWindow";
+import EducationWindow from "../windows/EducationWindow";
+import LeadershipWindow from "../windows/LeadershipWindow";
 import SkillsWindow from "../windows/SkillsWindow";
 import Wallpaper from "./Wallpaper";
 
@@ -117,6 +119,44 @@ export default function Desktop() {
                                     isActive={w.isActive}
                                     onClose={() => close("experience")}
                                     onFocus={() => focus("experience")}
+                                />
+                            </motion.div>
+                        );
+                    }
+
+                    if (w.id === "education") {
+                        return (
+                            <motion.div
+                                key={w.id}
+                                variants={windowVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={transition}
+                            >
+                                <EducationWindow
+                                    isActive={w.isActive}
+                                    onClose={() => close("education")}
+                                    onFocus={() => focus("education")}
+                                />
+                            </motion.div>
+                        );
+                    }
+
+                    if (w.id === "leadership") {
+                        return (
+                            <motion.div
+                                key={w.id}
+                                variants={windowVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={transition}
+                            >
+                                <LeadershipWindow
+                                    isActive={w.isActive}
+                                    onClose={() => close("leadership")}
+                                    onFocus={() => focus("leadership")}
                                 />
                             </motion.div>
                         );

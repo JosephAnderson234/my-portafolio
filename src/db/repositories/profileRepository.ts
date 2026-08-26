@@ -13,6 +13,7 @@ class StaticProfileRepository implements ProfileRepository {
       location: profileData.location,
       email: profileData.email,
       phone: profileData.phone,
+      resume: profileData.resume,
     };
   }
 }

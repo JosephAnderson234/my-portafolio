@@ -13,7 +13,7 @@
     {
       "name": "Cloud & DevOps",
       "color": "violet",
-      "skills": ["AWS S3", "AWS EC2", "AWS Lambda", "AWS API Gateway", "AWS DynamoDB", "Docker", "Vercel"]
+      "skills": ["AWS S3", "AWS EC2", "AWS Lambda", "AWS API Gateway", "AWS DynamoDB", "Supabase", "Docker", "Vercel"]
     },
     {
       "name": "Tools & Languages",

@@ -1,0 +1,43 @@
+{
+  "activities": [
+    {
+      "title": "Mentor Académico – Curso Desarrollo Basado en Plataformas (DBP)",
+      "role": "Voluntariado",
+      "period": "2025",
+      "location": "Lima, Perú",
+      "points": [
+        "Mentoré a estudiantes mediante 18 horas de asesorías académicas",
+        "Expliqué conceptos de desarrollo de software y tecnologías de plataformas",
+        "Fortalecí habilidades de comunicación técnica y enseñanza estructurada"
+      ]
+    },
+    {
+      "title": "UTEC Ventures",
+      "role": "Voluntario en Prototipado Tecnológico",
+      "period": "Enero 2026",
+      "location": "Lima, Perú",
+      "points": [
+        "Colaboré en sesiones de prototipado con equipos de Tech MBA",
+        "Contribuí en el desarrollo de soluciones tecnológicas interdisciplinarias",
+        "Adapté enfoques técnicos a necesidades de negocio"
+      ]
+    },
+    {
+      "title": "Comunidades Técnicas",
+      "role": "Participante Activo",
+      "period": "2021 – Actualidad",
+      "location": "Lima, Perú",
+      "points": [
+        "Intercambié conocimiento y resolví problemas en comunidades de programación",
+        "Desarrollé pensamiento crítico mediante discusión de soluciones técnicas",
+        "Me mantuve en aprendizaje continuo explorando nuevas tecnologías"
+      ]
+    }
+  ],
+  "interests": [
+    "Arquitectura de software",
+    "Desarrollo de productos",
+    "Optimización de rendimiento",
+    "Mentoría técnica"
+  ]
+}

@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+#some documents unnecesarry
+docs/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -44,3 +47,4 @@ next-env.d.ts
 .venv/
 
 CV_CAMPOS.md
+.gstack/

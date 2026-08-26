@@ -7,7 +7,9 @@ export type WindowType =
     | "about"
     | "projects"
     | "skills"
-    | "experience";
+    | "experience"
+    | "education"
+    | "leadership";
 
 type WindowState = {
     id: WindowType;

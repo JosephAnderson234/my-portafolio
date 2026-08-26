@@ -67,6 +67,38 @@ body {
 	border-color: var(--hypr-border-active);
 }
 
+/* Custom scrollbars for window content */
+.hypr-window ::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+.hypr-window ::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.hypr-window ::-webkit-scrollbar-thumb {
+	background: rgba(118, 247, 247, 0.2);
+	border-radius: 999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+}
+
+.hypr-window ::-webkit-scrollbar-thumb:hover {
+	background: rgba(118, 247, 247, 0.4);
+	background-clip: padding-box;
+}
+
+.hypr-window * {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(118, 247, 247, 0.25) transparent;
+}
+
+::selection {
+	background: rgba(118, 247, 247, 0.3);
+	color: #f4feff;
+}
+
 .wallpaper-grain {
 	position: absolute;
 	inset: 0;

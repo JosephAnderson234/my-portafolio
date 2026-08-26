@@ -5,6 +5,7 @@ import {
   IconBrandGithub,
   IconBrandLinkedin,
   IconBrandTwitter,
+  IconDownload,
   IconMapPin,
   IconMail,
   IconPhone,
@@ -46,10 +47,20 @@ export default function AboutWindow({ isActive, onClose, onFocus }: Props) {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-200/25 bg-slate-900/60 text-cyan-300">
               <IconUser size={36} stroke={1.5} />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-xl font-semibold text-slate-50">{profileData.name}</h1>
               <p className="text-sm text-cyan-300">{profileData.role}</p>
             </div>
+            {profileData.resume && (
+              <a
+                href={profileData.resume}
+                download
+                className="ml-auto flex shrink-0 items-center gap-1.5 self-start rounded-lg border border-cyan-200/25 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-100 transition-all hover:border-cyan-200/50 hover:bg-cyan-500/20"
+              >
+                <IconDownload size={14} stroke={2} />
+                <span className="hidden sm:inline">Descargar CV</span>
+              </a>
+            )}
           </div>
         </motion.div>
 

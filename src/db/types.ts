@@ -34,4 +34,5 @@ export interface ProfileSummary {
   location?: string;
   email?: string;
   phone?: string;
+  resume?: string;
 }

@@ -5,9 +5,11 @@ import type { ComponentType } from "react";
 import {
     IconBriefcase,
     IconFolderCode,
+    IconSchool,
     IconTerminal2,
     IconTool,
     IconUserCircle,
+    IconUsers,
 } from "@tabler/icons-react";
 import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
 
@@ -16,6 +18,8 @@ const apps: { id: WindowType; icon: ComponentType<{ size?: number; stroke?: numb
     { id: "about", icon: IconUserCircle, label: "About Me" },
     { id: "projects", icon: IconFolderCode, label: "Projects" },
     { id: "experience", icon: IconBriefcase, label: "Experience" },
+    { id: "education", icon: IconSchool, label: "Education" },
+    { id: "leadership", icon: IconUsers, label: "Leadership" },
     { id: "skills", icon: IconTool, label: "Skills" },
 ];
 
@@ -50,6 +54,9 @@ export default function Dock() {
                         aria-label={app.label}
                         title={app.label}
                     >
+                        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-slate-950/90 px-2 py-1 text-[11px] text-slate-200 opacity-0 shadow-lg backdrop-blur-sm transition-all duration-150 group-hover:-translate-y-0.5 group-hover:opacity-100">
+                            {app.label}
+                        </span>
                         <Icon size={26} stroke={1.8} />
                         {isOpen && (
                             <span className={`hypr-pulse absolute -bottom-1 h-1.5 w-1.5 rounded-full ${isActive ? "bg-cyan-200" : "bg-slate-300"}`} />

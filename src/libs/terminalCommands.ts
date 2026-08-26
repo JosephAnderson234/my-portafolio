@@ -1,5 +1,6 @@
 import profileData from "src/data/profile.json";
 import skillsData from "src/data/skills.json";
+import educationData from "src/data/education.json";
 
 // Projects and experience are mocked here for the terminal (same mock as repositories)
 const PROJECTS_MOCK = [
@@ -11,10 +12,15 @@ const PROJECTS_MOCK = [
 ];
 
 const EXPERIENCE_MOCK = [
+    { role: "Fullstack Developer", company: "Mekánico", current: true },
+    { role: "Programador Full Stack", company: "Cognitia", current: false },
+    { role: "Asistente de Catedra y Laboratorio - Programacion II", company: "UTEC", current: false },
+    { role: "Desarrollador de Back-end", company: "BioActiva", current: false },
     { role: "Director de Sistemas", company: "Club de Software Libre - UTEC", current: true },
-    { role: "Asistente de Catedra y Laboratorio - Programacion II", company: "UTEC", current: true },
+    { role: "Asistente de Catedra - Programacion II", company: "UTEC", current: false },
     { role: "Desarrollador Full Stack", company: "Maftech S.A.C.", current: false },
-    { role: "Miembro del Area Tecnica", company: "Club de Software Libre - UTEC", current: false },
+    { role: "Desarrollo Web", company: "Autónomo", current: false },
+    { role: "Desarrollador Front-end", company: "Cachimbo", current: false },
     { role: "Desarrollador Independiente", company: "Proyectos Personales", current: true },
 ];
 
@@ -30,6 +36,7 @@ export function runCommand(cmd: string): string[] {
                 "│  ls            List directory contents",
                 "│  projects      List all projects",
                 "│  experience    List work experience",
+                "│  education     Show academic background",
                 "│  skills        Show tech skills",
                 "│  clear         Clear terminal",
                 "└───────────────────────────────────────────",
@@ -46,7 +53,7 @@ export function runCommand(cmd: string): string[] {
             ];
 
         case "ls":
-            return ["about/  projects/  experience/  skills/  contact.txt"];
+            return ["about/  projects/  experience/  education/  skills/  contact.txt"];
 
         case "projects":
             return [
@@ -61,6 +68,13 @@ export function runCommand(cmd: string): string[] {
                 ...EXPERIENCE_MOCK.map(
                     (e) => `│  ${e.current ? "▶" : "·"} ${e.role} @ ${e.company}`
                 ),
+                "└───────────────────────────────────────────",
+            ];
+
+        case "education":
+            return [
+                "┌─ Education ────────────────────────────────",
+                ...educationData.items.map((e) => `│  ${e.degree} — ${e.institution} (${e.period})`),
                 "└───────────────────────────────────────────",
             ];
 

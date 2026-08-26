@@ -1,12 +1,13 @@
 {
   "name": "Joseph Anderson Cose Rojas",
-  "role": "Desarrollador Full Stack",
+  "role": "Estudiante de Ciencias de la Computación & Desarrollador Full Stack",
   "tagline": "Construyo productos web escalables con React, Next.js y Spring Boot, enfocados en rendimiento y experiencia de usuario.",
-  "bio": "Estudiante de Ciencias de la Computación en UTEC y Desarrollador Full Stack. Tengo experiencia construyendo sistemas completos con React, Next.js, Spring Boot y PostgreSQL, aplicando buenas prácticas de arquitectura, seguridad con JWT y despliegue continuo.",
+  "bio": "Estudiante de Ciencias de la Computación en UTEC y Desarrollador Full Stack. Actualmente desarrollo un sistema de gestión de flotas en Mekánico, y antes aporté en los equipos de Cognitia y BioActiva. Lidero el área técnica del Club de Software Libre - UTEC y soy asistente de cátedra de Programación II. Tengo experiencia construyendo sistemas completos con React, Next.js, Spring Boot y PostgreSQL, aplicando buenas prácticas de arquitectura, seguridad con JWT y despliegue continuo.",
   "location": "Lima, Perú",
   "email": "coserojasj@gmail.com",
   "phone": "934 668 917",
   "avatar": "/avatar.png",
+  "resume": "/Joseph_Anderson_Cose_Rojas.pdf",
   "links": [
     { "label": "GitHub", "url": "https://github.com/JosephAnderson234", "icon": "github" },
     { "label": "LinkedIn", "url": "https://www.linkedin.com/in/joseph-anderson-cose-rojas/", "icon": "linkedin" }
