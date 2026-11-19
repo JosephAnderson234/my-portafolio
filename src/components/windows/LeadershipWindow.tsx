@@ -24,7 +24,7 @@ export default function LeadershipWindow({ isActive, onClose, onFocus }: Props) 
         <div className="mb-4 flex items-center gap-2">
           <IconUsers size={16} stroke={1.8} className="text-cyan-300" />
           <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Leadership & Activities
+            Liderazgo y actividades
           </span>
         </div>
 
@@ -70,7 +70,7 @@ export default function LeadershipWindow({ isActive, onClose, onFocus }: Props) 
         >
           <h2 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
             <IconBulb size={13} stroke={2} className="text-amber-300" />
-            Interests
+            Intereses
           </h2>
           <div className="flex flex-wrap gap-2">
             {activitiesData.interests.map((interest) => (

@@ -15,12 +15,12 @@ import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
 
 const apps: { id: WindowType; icon: ComponentType<{ size?: number; stroke?: number }>; label: string }[] = [
     { id: "terminal", icon: IconTerminal2, label: "Terminal" },
-    { id: "about", icon: IconUserCircle, label: "About Me" },
-    { id: "projects", icon: IconFolderCode, label: "Projects" },
-    { id: "experience", icon: IconBriefcase, label: "Experience" },
-    { id: "education", icon: IconSchool, label: "Education" },
-    { id: "leadership", icon: IconUsers, label: "Leadership" },
-    { id: "skills", icon: IconTool, label: "Skills" },
+    { id: "about", icon: IconUserCircle, label: "Sobre mí" },
+    { id: "projects", icon: IconFolderCode, label: "Proyectos" },
+    { id: "experience", icon: IconBriefcase, label: "Experiencia" },
+    { id: "education", icon: IconSchool, label: "Educación" },
+    { id: "leadership", icon: IconUsers, label: "Liderazgo" },
+    { id: "skills", icon: IconTool, label: "Habilidades" },
 ];
 
 export default function Dock() {

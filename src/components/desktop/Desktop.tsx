@@ -40,7 +40,7 @@ export default function Desktop() {
                         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3"
                     >
                         <p className="text-sm text-slate-400" style={{ fontFamily: "var(--font-mono)" }}>
-                            Click an icon in the dock to open a window
+                            Haz clic en un ícono del dock para abrir una ventana
                         </p>
                     </motion.div>
                 )}

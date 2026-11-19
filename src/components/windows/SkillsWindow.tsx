@@ -38,7 +38,7 @@ export default function SkillsWindow({ isActive, onClose, onFocus }: Props) {
         <div className="mb-4 flex items-center gap-2">
           <IconTool size={16} stroke={1.8} className="text-cyan-300" />
           <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Technical Skills
+            Habilidades técnicas
           </span>
         </div>
 

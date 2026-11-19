@@ -30,7 +30,7 @@ export function WindowManagerProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const [windows, setWindows] = useState<WindowState[]>([]);
+    const [windows, setWindows] = useState<WindowState[]>([{ id: "about", isActive: true }]);
 
     const open = (id: WindowType) => {
         setWindows((prev) => {

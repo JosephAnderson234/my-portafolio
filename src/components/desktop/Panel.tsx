@@ -19,12 +19,12 @@ import siteData from "src/data/site.json";
 
 const appMeta: Record<WindowType, { label: string; Icon: React.ComponentType<{ size?: number; stroke?: number }> }> = {
     terminal: { label: "Terminal", Icon: IconTerminal2 },
-    about: { label: "About Me", Icon: IconUserCircle },
-    projects: { label: "Projects", Icon: IconFolderCode },
-    experience: { label: "Experience", Icon: IconBriefcase },
-    education: { label: "Education", Icon: IconSchool },
-    leadership: { label: "Leadership", Icon: IconUsers },
-    skills: { label: "Skills", Icon: IconTool },
+    about: { label: "Sobre mí", Icon: IconUserCircle },
+    projects: { label: "Proyectos", Icon: IconFolderCode },
+    experience: { label: "Experiencia", Icon: IconBriefcase },
+    education: { label: "Educación", Icon: IconSchool },
+    leadership: { label: "Liderazgo", Icon: IconUsers },
+    skills: { label: "Habilidades", Icon: IconTool },
 };
 
 function useClock() {

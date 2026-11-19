@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import {
   IconBrandGithub,
   IconExternalLink,
-  IconLoader2,
   IconFolderCode,
 } from "@tabler/icons-react";
 import Window from "./Windows";
@@ -19,9 +18,9 @@ type Props = {
 };
 
 const statusConfig: Record<ProjectStatus, { label: string; color: string }> = {
-  planned: { label: "Planned", color: "text-amber-300 bg-amber-400/15 border-amber-400/30" },
-  "in-progress": { label: "In Progress", color: "text-cyan-300 bg-cyan-400/15 border-cyan-400/30" },
-  released: { label: "Released", color: "text-emerald-300 bg-emerald-400/15 border-emerald-400/30" },
+  planned: { label: "Planificado", color: "text-amber-300 bg-amber-400/15 border-amber-400/30" },
+  "in-progress": { label: "En progreso", color: "text-cyan-300 bg-cyan-400/15 border-cyan-400/30" },
+  released: { label: "Publicado", color: "text-emerald-300 bg-emerald-400/15 border-emerald-400/30" },
 };
 
 export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
@@ -47,13 +46,27 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
         <div className="mb-4 flex items-center gap-2">
           <IconFolderCode size={16} stroke={1.8} className="text-cyan-300" />
           <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Projects — {projects.length} total
+            Proyectos — {projects.length} en total
           </span>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <IconLoader2 size={24} className="animate-spin text-cyan-300" stroke={1.8} />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-xl border border-white/10 bg-slate-900/40 p-4"
+              >
+                <div className="mb-3 h-4 w-2/3 rounded bg-slate-700/40" />
+                <div className="mb-2 h-3 w-full rounded bg-slate-700/30" />
+                <div className="mb-3 h-3 w-4/5 rounded bg-slate-700/30" />
+                <div className="mb-3 flex gap-1.5">
+                  <div className="h-4 w-14 rounded bg-slate-700/30" />
+                  <div className="h-4 w-14 rounded bg-slate-700/30" />
+                </div>
+                <div className="h-4 w-20 rounded-full bg-slate-700/30" />
+              </div>
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -69,7 +82,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                 >
                   {project.featured && (
                     <span className="absolute right-3 top-3 rounded-full border border-violet-400/30 bg-violet-500/15 px-2 py-0.5 text-[10px] text-violet-300">
-                      Featured
+                      Destacado
                     </span>
                   )}
 
@@ -107,7 +120,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <IconBrandGithub size={12} stroke={1.8} />
-                          Code
+                          Código
                         </a>
                       )}
                       {project.live_url && (

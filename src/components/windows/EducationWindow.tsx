@@ -24,7 +24,7 @@ export default function EducationWindow({ isActive, onClose, onFocus }: Props) {
         <div className="mb-4 flex items-center gap-2">
           <IconSchool size={16} stroke={1.8} className="text-cyan-300" />
           <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Education
+            Educación
           </span>
         </div>
 
