@@ -4,13 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { runCommand } from "src/libs/terminalCommands";
 import { runHyprctl } from "src/libs/hyprctl";
 import { useHyprConfig } from "src/context/HyprConfigContext";
+import { useWindowManager } from "src/context/WindowManagerContext";
+import { useHyprDispatch } from "src/hooks/useHyprDispatch";
 import siteData from "src/data/site.json";
 import profileData from "src/data/profile.json";
 
 export default function Terminal() {
     const prompt = siteData.terminalPrompt;
     const bottomRef = useRef<HTMLDivElement>(null);
-    const { config, setOption } = useHyprConfig();
+    const { config, setOption, binds, mainMod } = useHyprConfig();
+    const { windows, activeWorkspace, specialOpen, focused } = useWindowManager();
+    const dispatch = useHyprDispatch();
 
     const [outputHistory, setOutputHistory] = useState<{ type: "input" | "output"; text: string }[]>([
         { type: "output", text: `Welcome to ${siteData.desktopName} — ${siteData.version}` },
@@ -43,7 +47,7 @@ export default function Terminal() {
         }
 
         const [bin, ...args] = command.split(/\s+/);
-        const output = bin === "hyprctl" ? runHyprctl(args, { config, setOption }) : runCommand(command);
+        const output = bin === "hyprctl" ? runHyprctl(args, { config, setOption, binds, mainMod, dispatch, windows, activeWorkspace, specialOpen, focused }) : runCommand(command);
 
         setOutputHistory((prev) => [
             ...prev,
@@ -83,7 +87,7 @@ export default function Terminal() {
                                 <span className="text-slate-100">{entry.text}</span>
                             </div>
                         ) : (
-                            <span className="text-slate-400">{entry.text}</span>
+                            <span className="whitespace-pre-wrap break-words text-slate-400">{entry.text}</span>
                         )}
                     </div>
                 ))}

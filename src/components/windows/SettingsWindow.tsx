@@ -3,15 +3,14 @@
 import { useEffect, useId, useState } from "react";
 import { IconAdjustmentsHorizontal, IconRefresh } from "@tabler/icons-react";
 import Window from "./Windows";
-import { useHyprConfig } from "src/context/HyprConfigContext";
-import { BINDS } from "src/config/apps";
+import { modLabel, useHyprConfig } from "src/context/HyprConfigContext";
+import { describeBind, formatCombo } from "src/config/apps";
 import {
     OPTIONS,
     OptionDef,
     ParseError,
     PRESETS,
     SECTION_TITLES,
-    formatValue,
     gradientToString,
     parseConfig,
     parseGradient,
@@ -236,8 +235,8 @@ function VisualTab() {
 }
 
 function EditorTab() {
-    const { config, setMany } = useHyprConfig();
-    const generated = serializeConfig(config);
+    const { config, binds, setMany, setBinds } = useHyprConfig();
+    const generated = serializeConfig(config, binds);
     const [text, setText] = useState(generated);
     const [dirty, setDirty] = useState(false);
     const [errors, setErrors] = useState<ParseError[]>([]);
@@ -249,10 +248,11 @@ function EditorTab() {
     }, [generated, dirty]);
 
     const apply = () => {
-        const { updates, errors } = parseConfig(text);
+        const { updates, binds: parsedBinds, errors } = parseConfig(text);
         setMany(updates);
+        if (parsedBinds) setBinds(parsedBinds);
         setErrors(errors);
-        setApplied(Object.keys(updates).length);
+        setApplied(Object.keys(updates).length + (parsedBinds?.length ?? 0));
         setDirty(false);
     };
 
@@ -297,7 +297,7 @@ function EditorTab() {
                     Descartar cambios
                 </button>
                 <p role="status" className="text-xs text-slate-300">
-                    {dirty ? "Cambios sin aplicar" : applied !== null ? `Recargado · ${applied} opciones` : ""}
+                    {dirty ? "Cambios sin aplicar" : applied !== null ? `Recargado · ${applied} líneas aplicadas` : ""}
                 </p>
             </div>
 
@@ -315,28 +315,36 @@ function EditorTab() {
 }
 
 function BindsTab() {
-    const { config } = useHyprConfig();
-    const layoutDef = OPTIONS.find((o) => o.key === "general:layout")!;
+    const { binds, mainMod } = useHyprConfig();
+    const mod = modLabel(mainMod);
 
     return (
         <div className="space-y-3">
             <p className="text-sm text-slate-300">
-                El navegador no recibe la tecla <kbd className="hypr-kbd">Super</kbd>, así que el modificador es{" "}
-                <kbd className="hypr-kbd">Alt</kbd>. También puedes usar <code className="text-slate-100">hyprctl</code> desde la terminal.
+                El navegador no recibe la tecla <kbd className="hypr-kbd">Super</kbd> en todos los sistemas, por eso{" "}
+                <code className="text-slate-100">$mainMod</code> es <kbd className="hypr-kbd">{mod}</kbd>. Cámbialo en{" "}
+                <em>Ajustes › Variables</em> y edita los atajos como líneas <code className="text-slate-100">bind = …</code> en el{" "}
+                <em>Editor</em>.
             </p>
             <ul className="divide-y divide-white/6 rounded-[calc(var(--hypr-rounding)*0.8)] border border-white/8 bg-slate-900/30 px-3">
-                {BINDS.map((b) => (
-                    <li key={b.keys} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                        <span className="text-slate-200">{b.action}</span>
-                        <kbd className="hypr-kbd shrink-0">{b.keys}</kbd>
+                {binds.map((b, i) => (
+                    <li key={`${b.mods}-${b.key}-${i}`} className="flex items-center justify-between gap-3 py-2 text-sm">
+                        <span className="min-w-0">
+                            <span className="block text-slate-200">{describeBind(b.dispatcher, b.arg)}</span>
+                            <span className="block truncate text-xs text-slate-400" style={{ fontFamily: "var(--font-mono)" }}>
+                                {b.dispatcher}
+                                {b.arg ? `, ${b.arg}` : ""}
+                            </span>
+                        </span>
+                        <kbd className="hypr-kbd shrink-0">{formatCombo(b.mods, b.key, mainMod)}</kbd>
                     </li>
                 ))}
             </ul>
             <pre className="overflow-x-auto rounded-md border border-white/8 bg-slate-950/60 p-3 text-xs leading-6 text-slate-300" style={{ fontFamily: "var(--font-mono)" }}>
-{`$ hyprctl keyword decoration:rounding 16
-$ hyprctl keyword general:col.active_border rgba(ff5f87ff) rgba(ffd75fff) 45deg
-$ hyprctl getoption general:layout
-general:layout = ${formatValue(layoutDef, config["general:layout"])}`}
+{`$ hyprctl dispatch workspace 2
+$ hyprctl dispatch movetoworkspace 3
+$ hyprctl keyword decoration:rounding 16
+$ hyprctl clients`}
             </pre>
         </div>
     );
