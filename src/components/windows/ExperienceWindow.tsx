@@ -6,7 +6,6 @@ import {
   IconBriefcase,
   IconCalendar,
   IconMapPin,
-  IconLoader2,
   IconCircleFilled,
 } from "@tabler/icons-react";
 import Window from "./Windows";
@@ -22,12 +21,12 @@ type Props = {
 function formatDate(dateStr: string): string {
   const [year, month] = dateStr.split("-");
   const date = new Date(Number(year), Number(month) - 1);
-  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  return date.toLocaleDateString("es-PE", { month: "short", year: "numeric" });
 }
 
 function formatDateRange(startDate: string, endDate: string | undefined, current: boolean): string {
   const start = formatDate(startDate);
-  if (current) return `${start} — Present`;
+  if (current) return `${start} — Presente`;
   if (endDate) return `${start} — ${formatDate(endDate)}`;
   return start;
 }
@@ -55,13 +54,23 @@ export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) 
         <div className="mb-4 flex items-center gap-2">
           <IconBriefcase size={16} stroke={1.8} className="text-cyan-300" />
           <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Work Experience
+            Experiencia laboral
           </span>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <IconLoader2 size={24} className="animate-spin text-cyan-300" stroke={1.8} />
+          <div className="flex flex-col gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-xl border border-white/10 bg-slate-900/40 p-4"
+              >
+                <div className="mb-2 h-4 w-1/2 rounded bg-slate-700/40" />
+                <div className="mb-3 h-3 w-1/3 rounded bg-slate-700/30" />
+                <div className="mb-2 h-3 w-full rounded bg-slate-700/30" />
+                <div className="h-3 w-4/5 rounded bg-slate-700/30" />
+              </div>
+            ))}
           </div>
         ) : (
           <div className="relative pl-5">
@@ -94,7 +103,7 @@ export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) 
                       </div>
                       {exp.current && (
                         <span className="rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 text-xs text-emerald-300">
-                          Current
+                          Actual
                         </span>
                       )}
                     </div>
