@@ -14,7 +14,9 @@ export type OptionDef =
     | (Base & { type: "enum"; values: readonly string[]; default: string });
 
 export const OPTIONS: OptionDef[] = [
-    { key: "general:layout", label: "Layout", type: "enum", values: ["dwindle", "floating"], default: "dwindle" },
+    { key: "$mainMod", label: "Tecla maestra", type: "enum", values: ["ALT", "SUPER"], default: "ALT" },
+
+    { key: "general:layout", label: "Layout", type: "enum", values: ["dwindle", "master"], default: "dwindle" },
     { key: "general:gaps_in", label: "Espacio entre ventanas", type: "int", min: 0, max: 30, step: 1, default: 5 },
     { key: "general:gaps_out", label: "Espacio con los bordes", type: "int", min: 0, max: 60, step: 1, default: 14 },
     { key: "general:border_size", label: "Grosor del borde", type: "int", min: 0, max: 6, step: 1, default: 2 },
@@ -37,9 +39,16 @@ export const OPTIONS: OptionDef[] = [
     { key: "animations:speed", label: "Duración (ds)", type: "float", min: 0.5, max: 8, step: 0.5, default: 2.5 },
     { key: "animations:bezier", label: "Curva", type: "enum", values: ["easeOutQuint", "overshot", "smooth", "linear"], default: "easeOutQuint" },
     { key: "animations:windows_style", label: "Estilo de apertura", type: "enum", values: ["popin", "slide", "fade"], default: "popin" },
+    { key: "animations:workspaces_style", label: "Cambio de workspace", type: "enum", values: ["slide", "slidevert", "fade"], default: "slide" },
+
+    { key: "dwindle:default_split_ratio", label: "Proporción de división", type: "float", min: 0.2, max: 1.8, step: 0.05, default: 1 },
+    { key: "master:mfact", label: "Ancho del master", type: "float", min: 0.2, max: 0.8, step: 0.01, default: 0.55 },
 ];
 
 export const SECTION_TITLES: Record<string, string> = {
+    "": "Variables",
+    dwindle: "Layout dwindle",
+    master: "Layout master",
     general: "General",
     decoration: "Decoración",
     "decoration:blur": "Desenfoque",
@@ -52,9 +61,154 @@ export const getOption = (key: string) => OPTION_MAP.get(key);
 
 export const DEFAULT_CONFIG: HyprConfig = Object.fromEntries(OPTIONS.map((o) => [o.key, o.default]));
 
-// Zonas reservadas (equivalente a la "exclusive zone" de waybar)
+// Zona reservada por la barra (equivalente a la "exclusive zone" de waybar)
 export const PANEL_HEIGHT = 44;
-export const DOCK_RESERVED = 90;
+export const WORKSPACE_COUNT = 10;
+
+/* ------------------------------ Binds ------------------------------ */
+
+export type Bind = { mods: string; key: string; dispatcher: string; arg: string };
+
+export const EXEC_TARGETS = [
+    "launcher",
+    "terminal",
+    "about",
+    "projects",
+    "experience",
+    "education",
+    "leadership",
+    "skills",
+    "settings",
+] as const;
+
+export const DISPATCHERS = [
+    "exec",
+    "killactive",
+    "togglefloating",
+    "fullscreen",
+    "workspace",
+    "movetoworkspace",
+    "movetoworkspacesilent",
+    "movefocus",
+    "togglespecialworkspace",
+] as const;
+
+const MOD_NAMES = ["$MAINMOD", "SUPER", "ALT", "SHIFT", "CTRL", "CONTROL"];
+
+const KEY_CODES: Record<string, string> = {
+    LEFT: "ArrowLeft",
+    RIGHT: "ArrowRight",
+    UP: "ArrowUp",
+    DOWN: "ArrowDown",
+    RETURN: "Enter",
+    ENTER: "Enter",
+    SPACE: "Space",
+    TAB: "Tab",
+    ESCAPE: "Escape",
+    COMMA: "Comma",
+    PERIOD: "Period",
+    MOUSE_DOWN: "WheelDown",
+    MOUSE_UP: "WheelUp",
+};
+
+/** Nombre de tecla de Hyprland → KeyboardEvent.code ("Q" → "KeyQ"). */
+export function keyToCode(key: string): string | null {
+    const k = key.trim().toUpperCase();
+    if (/^[A-Z]$/.test(k)) return `Key${k}`;
+    if (/^[0-9]$/.test(k)) return `Digit${k}`;
+    return KEY_CODES[k] ?? null;
+}
+
+/** "$mainMod SHIFT" → conjunto de modificadores reales, p. ej. {"ALT","SHIFT"}. */
+export function resolveMods(mods: string, mainMod: string): Set<string> {
+    const out = new Set<string>();
+    for (const raw of mods.split(/[\s_+]+/).filter(Boolean)) {
+        const m = raw.toUpperCase();
+        if (m === "$MAINMOD") out.add(mainMod.toUpperCase());
+        else if (m === "CONTROL") out.add("CTRL");
+        else out.add(m);
+    }
+    return out;
+}
+
+const WS_ARG = /^(\d+|[er]?[+-]\d+)$/;
+
+/** Valida la sintaxis dispatcher + argumento sin ejecutarlo. Devuelve un error o null. */
+export function validateDispatch(dispatcher: string, arg: string): string | null {
+    const a = arg.trim();
+    switch (dispatcher) {
+        case "exec":
+            return (EXEC_TARGETS as readonly string[]).includes(a)
+                ? null
+                : `exec: "${a}" no existe (${EXEC_TARGETS.join(", ")})`;
+        case "killactive":
+        case "togglefloating":
+        case "fullscreen":
+        case "togglespecialworkspace":
+            return null;
+        case "workspace": {
+            if (!WS_ARG.test(a)) return `workspace: argumento no válido "${a}"`;
+            if (/^\d+$/.test(a) && (Number(a) < 1 || Number(a) > WORKSPACE_COUNT))
+                return `workspace: usa 1…${WORKSPACE_COUNT}`;
+            return null;
+        }
+        case "movetoworkspace":
+        case "movetoworkspacesilent":
+            if (/^special(:\w+)?$/.test(a)) return null;
+            return validateDispatch("workspace", a)?.replace("workspace", dispatcher) ?? null;
+        case "movefocus":
+            return /^[lrud]$/.test(a) ? null : `movefocus: usa l, r, u o d`;
+        default:
+            return `dispatcher desconocido "${dispatcher}"`;
+    }
+}
+
+export function parseBind(value: string): { ok: true; bind: Bind } | { ok: false; error: string } {
+    const parts = value.split(",");
+    if (parts.length < 3) return { ok: false, error: "bind: formato «MODS, tecla, dispatcher, argumento»" };
+    const [mods, key, dispatcher] = parts.map((p) => p.trim());
+    const arg = parts.slice(3).join(",").trim();
+
+    const badMod = mods.split(/[\s_+]+/).filter(Boolean).find((m) => !MOD_NAMES.includes(m.toUpperCase()));
+    if (badMod) return { ok: false, error: `bind: modificador desconocido "${badMod}"` };
+    if (!keyToCode(key)) return { ok: false, error: `bind: tecla desconocida "${key}"` };
+    const err = validateDispatch(dispatcher, arg);
+    if (err) return { ok: false, error: `bind: ${err}` };
+    return { ok: true, bind: { mods, key, dispatcher, arg } };
+}
+
+export const formatBind = (b: Bind) => `${b.mods}, ${b.key}, ${b.dispatcher}${b.arg ? `, ${b.arg}` : ""}`;
+
+// Basado en el hyprland.conf por defecto
+export const DEFAULT_BINDS: Bind[] = [
+    { mods: "$mainMod", key: "Q", dispatcher: "exec", arg: "terminal" },
+    { mods: "$mainMod", key: "C", dispatcher: "killactive", arg: "" },
+    { mods: "$mainMod", key: "R", dispatcher: "exec", arg: "launcher" },
+    { mods: "$mainMod", key: "E", dispatcher: "exec", arg: "projects" },
+    { mods: "$mainMod", key: "V", dispatcher: "togglefloating", arg: "" },
+    { mods: "$mainMod", key: "F", dispatcher: "fullscreen", arg: "" },
+    { mods: "$mainMod", key: "comma", dispatcher: "exec", arg: "settings" },
+    { mods: "$mainMod", key: "left", dispatcher: "movefocus", arg: "l" },
+    { mods: "$mainMod", key: "right", dispatcher: "movefocus", arg: "r" },
+    { mods: "$mainMod", key: "up", dispatcher: "movefocus", arg: "u" },
+    { mods: "$mainMod", key: "down", dispatcher: "movefocus", arg: "d" },
+    ...Array.from({ length: 10 }, (_, i) => ({
+        mods: "$mainMod",
+        key: String((i + 1) % 10),
+        dispatcher: "workspace",
+        arg: String(i + 1),
+    })),
+    ...Array.from({ length: 10 }, (_, i) => ({
+        mods: "$mainMod SHIFT",
+        key: String((i + 1) % 10),
+        dispatcher: "movetoworkspace",
+        arg: String(i + 1),
+    })),
+    { mods: "$mainMod", key: "S", dispatcher: "togglespecialworkspace", arg: "magic" },
+    { mods: "$mainMod SHIFT", key: "S", dispatcher: "movetoworkspace", arg: "special:magic" },
+    { mods: "$mainMod", key: "mouse_down", dispatcher: "workspace", arg: "e+1" },
+    { mods: "$mainMod", key: "mouse_up", dispatcher: "workspace", arg: "e-1" },
+];
 
 export const BEZIERS: Record<string, [number, number, number, number]> = {
     easeOutQuint: [0.23, 1, 0.32, 1],
@@ -149,7 +303,7 @@ export function formatValue(def: OptionDef, value: HyprValue): string {
 
 /* ------------------- Serialización / parser .conf ------------------- */
 
-export function serializeConfig(config: HyprConfig): string {
+export function serializeConfig(config: HyprConfig, binds: Bind[] = DEFAULT_BINDS): string {
     type Node = { values: [string, string][]; children: Map<string, Node> };
     const root: Node = { values: [], children: new Map() };
 
@@ -181,13 +335,17 @@ export function serializeConfig(config: HyprConfig): string {
         }
     };
     write(root, 0);
+    lines.push("", "# Atajos · bind = MODS, tecla, dispatcher, argumento");
+    for (const b of binds) lines.push(`bind = ${formatBind(b)}`);
     return lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
 }
 
 export type ParseError = { line: number; message: string };
 
-export function parseConfig(text: string): { updates: HyprConfig; errors: ParseError[] } {
+export function parseConfig(text: string): { updates: HyprConfig; binds: Bind[] | null; errors: ParseError[] } {
     const updates: HyprConfig = {};
+    const binds: Bind[] = [];
+    let sawBind = false;
     const errors: ParseError[] = [];
     const stack: string[] = [];
 
@@ -206,9 +364,20 @@ export function parseConfig(text: string): { updates: HyprConfig; errors: ParseE
             if (!stack.pop()) errors.push({ line: lineNo, message: "«}» sin bloque abierto" });
             return;
         }
-        m = /^([\w.:-]+)\s*=\s*(.+)$/.exec(line);
+        m = /^([\w.:$-]+)\s*=\s*(.+)$/.exec(line);
         if (!m) {
             errors.push({ line: lineNo, message: `sintaxis no válida: "${line}"` });
+            return;
+        }
+        if (stack.length === 0 && /^bind\w*$/.test(m[1])) {
+            if (m[1] !== "bind") {
+                errors.push({ line: lineNo, message: `«${m[1]}» no está soportado, usa «bind»` });
+                return;
+            }
+            sawBind = true;
+            const res = parseBind(m[2]);
+            if (res.ok) binds.push(res.bind);
+            else errors.push({ line: lineNo, message: res.error });
             return;
         }
         const key = [...stack, m[1]].join(":");
@@ -223,7 +392,8 @@ export function parseConfig(text: string): { updates: HyprConfig; errors: ParseE
     });
 
     if (stack.length) errors.push({ line: text.split(/\r?\n/).length, message: `falta cerrar «${stack.join(" › ")}»` });
-    return { updates, errors };
+    // Como en Hyprland, recargar reemplaza todos los binds; sin líneas bind se conservan los actuales
+    return { updates, binds: sawBind ? binds : null, errors };
 }
 
 /* ------------------------------ Presets ------------------------------ */
@@ -295,9 +465,8 @@ export function toCssVars(c: HyprConfig): Record<string, string> {
         "--hypr-border-inactive": str(c, "general:col.inactive_border"),
         "--hypr-accent-solid": g.colors[0].slice(0, 7),
         "--hypr-rounding": `${num(c, "decoration:rounding")}px`,
-        "--hypr-blur": blurOn
-            ? `blur(${num(c, "decoration:blur:size") * num(c, "decoration:blur:passes")}px) saturate(130%)`
-            : "none",
+        // Lightning CSS descarta `backdrop-filter: var(--x)`, por eso solo se parametriza el radio
+        "--hypr-blur-radius": blurOn ? `${num(c, "decoration:blur:size") * num(c, "decoration:blur:passes")}px` : "0px",
         "--hypr-window-surface": blurOn ? "rgba(8, 12, 18, 0.82)" : "rgba(8, 12, 18, 0.96)",
         "--hypr-shadow": shadowOn && range > 0
             ? `0 ${Math.round(range / 3)}px ${range}px ${str(c, "decoration:shadow:color")}`
