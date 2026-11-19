@@ -1,10 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type TargetAndTransition } from "framer-motion";
 import { Rnd } from "react-rnd";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, createContext, useContext, useRef } from "react";
 import { IconX } from "@tabler/icons-react";
-import { useWindowManager } from "src/context/WindowManagerContext";
+import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
+import { useHyprConfig, WindowsStyle } from "src/context/HyprConfigContext";
+import { DOCK_RESERVED, PANEL_HEIGHT, num, str } from "src/config/hypr";
+import { MOBILE_BREAKPOINT, useViewport } from "src/hooks/useViewport";
+import { computeDwindle, Rect } from "src/libs/dwindle";
+
+/** Desktop provee el id de cada ventana para calcular su tile. */
+export const WindowIdContext = createContext<WindowType | null>(null);
 
 type Props = {
     title: string;
@@ -24,19 +31,11 @@ const CASCADE_STEP_X = 46;
 const CASCADE_STEP_Y = 38;
 const CASCADE_MAX = 5;
 
-function useIsMobile() {
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const query = window.matchMedia("(max-width: 639px)");
-        setIsMobile(query.matches);
-        const listener = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-        query.addEventListener("change", listener);
-        return () => query.removeEventListener("change", listener);
-    }, []);
-
-    return isMobile;
-}
+const VARIANTS: Record<WindowsStyle, { initial: TargetAndTransition; exit: TargetAndTransition }> = {
+    popin: { initial: { opacity: 0, scale: 0.88 }, exit: { opacity: 0, scale: 0.92 } },
+    slide: { initial: { opacity: 0, y: 36 }, exit: { opacity: 0, y: 24 } },
+    fade: { initial: { opacity: 0 }, exit: { opacity: 0 } },
+};
 
 function WindowChrome({
     title,
@@ -44,51 +43,57 @@ function WindowChrome({
     isActive,
     onClose,
     onFocus,
-    className,
+    draggable,
 }: {
     title: string;
     children: ReactNode;
     isActive: boolean;
     onClose: () => void;
     onFocus: () => void;
-    className?: string;
+    draggable: boolean;
 }) {
+    const { motion: m } = useHyprConfig();
+    const variant = VARIANTS[m.style] ?? VARIANTS.popin;
+
     return (
-        <motion.div
-            animate={{
-                borderColor: isActive ? "rgba(111, 242, 255, 0.7)" : "rgba(176, 232, 255, 0.2)",
-                boxShadow: isActive
-                    ? "0 0 0 1px rgba(111, 242, 255, 0.33), 0 25px 48px rgba(0, 7, 15, 0.58)"
-                    : "0 10px 30px rgba(0, 7, 15, 0.35)",
-                opacity: isActive ? 1 : 0.6,
-            }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className={`hypr-window flex h-full flex-col overflow-hidden ${className ?? ""}`}
+        <motion.section
+            initial={variant.initial}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ ...variant.exit, transition: { duration: m.duration * 0.7, ease: m.ease } }}
+            transition={{ duration: m.duration, ease: m.ease }}
+            data-active={isActive}
+            aria-label={title}
+            className="hypr-window flex h-full flex-col overflow-hidden"
         >
-            <div
+            <header
                 onMouseDown={onFocus}
-                className={`flex h-9 shrink-0 items-center justify-between px-3 select-none border-b sm:cursor-move ${
-                    isActive
-                        ? "border-cyan-100/25 bg-slate-900/72"
-                        : "border-white/10 bg-slate-950/52"
-                }`}
+                className={`hypr-titlebar flex h-9 shrink-0 items-center justify-between gap-2 border-b pl-3 pr-1.5 select-none ${
+                    draggable ? "cursor-move" : ""
+                } ${isActive ? "border-white/12 bg-slate-900/60" : "border-white/6 bg-slate-950/40"}`}
             >
-                <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-400/85" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-300/85" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-300/85" />
-                    <span className="pl-1 text-sm tracking-wide text-slate-100">{title}</span>
+                <div className="flex min-w-0 items-center gap-2">
+                    <span
+                        aria-hidden
+                        className="h-2 w-2 shrink-0 rounded-full transition-colors"
+                        style={{ background: isActive ? "var(--hypr-accent-solid)" : "rgb(71 85 105)" }}
+                    />
+                    <h2
+                        className={`truncate text-sm tracking-wide ${isActive ? "text-slate-50" : "text-slate-300"}`}
+                        style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                        {title}
+                    </h2>
                 </div>
 
                 <button
                     onClick={onClose}
-                    className="rounded-md border border-white/10 p-1 text-slate-300 transition-colors hover:border-cyan-100/40 hover:text-cyan-100"
-                    title="Cerrar ventana"
-                    aria-label="Cerrar ventana"
+                    className="hypr-nodrag flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-white/8 hover:text-slate-50"
+                    title={`Cerrar ${title} (Alt+Q)`}
+                    aria-label={`Cerrar ${title}`}
                 >
-                    <IconX size={14} stroke={2.2} />
+                    <IconX size={15} stroke={2.2} />
                 </button>
-            </div>
+            </header>
 
             <div
                 className="flex-1 overflow-auto p-3 text-sm text-slate-100"
@@ -96,7 +101,7 @@ function WindowChrome({
             >
                 {children}
             </div>
-        </motion.div>
+        </motion.section>
     );
 }
 
@@ -108,45 +113,88 @@ export default function Window({
     onFocus,
     defaultSize = { x: 120, y: 120, width: 520, height: 320 },
 }: Props) {
+    const id = useContext(WindowIdContext);
     const { windows } = useWindowManager();
-    const isMobile = useIsMobile();
+    const { config } = useHyprConfig();
+    const viewport = useViewport();
+    const lastRect = useRef<Rect | null>(null);
 
     const cascadeIndexRef = useRef<number | null>(null);
     if (cascadeIndexRef.current === null) {
         cascadeIndexRef.current = Math.max(windows.length - 1, 0) % CASCADE_MAX;
     }
-    const cascadeIndex = cascadeIndexRef.current;
 
-    const cascadedDefault = {
-        ...defaultSize,
-        x: defaultSize.x + cascadeIndex * CASCADE_STEP_X,
-        y: defaultSize.y + cascadeIndex * CASCADE_STEP_Y,
-    };
+    if (!viewport) return null;
 
-    if (isMobile) {
+    const opacity = num(config, isActive ? "decoration:active_opacity" : "decoration:inactive_opacity");
+    const zIndex = isActive ? 30 : 20;
+    const chrome = (draggable: boolean) => (
+        <WindowChrome title={title} isActive={isActive} onClose={onClose} onFocus={onFocus} draggable={draggable}>
+            {children}
+        </WindowChrome>
+    );
+
+    // Móvil: una ventana a la vez, a pantalla casi completa
+    if (viewport.w < MOBILE_BREAKPOINT) {
         if (!isActive) return null;
-
         return (
-            <div className="absolute inset-x-2 top-14 bottom-24 z-40">
-                <WindowChrome title={title} isActive={isActive} onClose={onClose} onFocus={onFocus}>
-                    {children}
-                </WindowChrome>
+            <div className="absolute inset-x-2 bottom-24 z-30" style={{ top: PANEL_HEIGHT + 8 }}>
+                {chrome(false)}
             </div>
         );
     }
 
+    // Tiling dwindle
+    if (str(config, "general:layout") === "dwindle") {
+        const gapsOut = num(config, "general:gaps_out");
+        const gapsIn = num(config, "general:gaps_in");
+        const area: Rect = {
+            x: gapsOut,
+            y: PANEL_HEIGHT + gapsOut,
+            w: viewport.w - gapsOut * 2,
+            h: viewport.h - PANEL_HEIGHT - DOCK_RESERVED - gapsOut,
+        };
+        const index = windows.findIndex((w) => w.id === id);
+        // Durante la animación de cierre la ventana ya no está en la lista: conservar su último tile
+        if (index >= 0) lastRect.current = computeDwindle(windows.length, area, gapsIn * 2)[index];
+        const rect = lastRect.current ?? area;
+
+        return (
+            <Rnd
+                key="tiled"
+                position={{ x: rect.x, y: rect.y }}
+                size={{ width: rect.w, height: rect.h }}
+                disableDragging
+                enableResizing={false}
+                onMouseDown={onFocus}
+                className="hypr-frame hypr-tiled"
+                style={{ zIndex, opacity }}
+            >
+                {chrome(false)}
+            </Rnd>
+        );
+    }
+
+    // Floating
+    const cascadeIndex = cascadeIndexRef.current;
     return (
         <Rnd
-            default={cascadedDefault}
+            key="floating"
+            default={{
+                ...defaultSize,
+                x: defaultSize.x + cascadeIndex * CASCADE_STEP_X,
+                y: Math.max(defaultSize.y, PANEL_HEIGHT + 12) + cascadeIndex * CASCADE_STEP_Y,
+            }}
             bounds="window"
+            dragHandleClassName="hypr-titlebar"
+            cancel=".hypr-nodrag"
             onMouseDown={onFocus}
-            style={{ zIndex: isActive ? 50 : 10 }}
+            className="hypr-frame"
+            style={{ zIndex, opacity }}
             minWidth={360}
             minHeight={220}
         >
-            <WindowChrome title={title} isActive={isActive} onClose={onClose} onFocus={onFocus}>
-                {children}
-            </WindowChrome>
+            {chrome(true)}
         </Rnd>
     );
 }
