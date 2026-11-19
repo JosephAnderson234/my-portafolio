@@ -1,10 +1,12 @@
 export type Rect = { x: number; y: number; w: number; h: number };
 
 /**
- * Layout "dwindle" de Hyprland: cada ventana nueva divide a la mitad el
- * espacio restante, alternando el eje según la proporción del área.
+ * Layout "dwindle": cada ventana nueva divide el espacio restante,
+ * alternando el eje según la proporción del área.
+ * `splitRatio` sigue a dwindle:default_split_ratio (1.0 = mitades iguales).
  */
-export function computeDwindle(count: number, area: Rect, gap: number, ratio = 0.5): Rect[] {
+export function computeDwindle(count: number, area: Rect, gap: number, splitRatio = 1): Rect[] {
+    const ratio = splitRatio / 2;
     const rects: Rect[] = [];
     let r = { ...area };
 
@@ -25,4 +27,29 @@ export function computeDwindle(count: number, area: Rect, gap: number, ratio = 0
     }
 
     return rects;
+}
+
+/**
+ * Layout "master": la primera ventana ocupa master:mfact del ancho
+ * y el resto se apila en una columna a la derecha.
+ */
+export function computeMaster(count: number, area: Rect, gap: number, mfact = 0.55): Rect[] {
+    if (count <= 0) return [];
+    if (count === 1) return [{ ...area }];
+
+    const masterW = Math.round((area.w - gap) * mfact);
+    const stackX = area.x + masterW + gap;
+    const stackW = area.w - masterW - gap;
+    const stackCount = count - 1;
+    const stackH = (area.h - gap * (stackCount - 1)) / stackCount;
+
+    return [
+        { x: area.x, y: area.y, w: masterW, h: area.h },
+        ...Array.from({ length: stackCount }, (_, i) => ({
+            x: stackX,
+            y: Math.round(area.y + i * (stackH + gap)),
+            w: stackW,
+            h: Math.round(stackH),
+        })),
+    ];
 }

@@ -14,7 +14,7 @@
 	--hypr-border-inactive: #59595980;
 	--hypr-accent-solid: #33ccff;
 	--hypr-rounding: 10px;
-	--hypr-blur: blur(14px) saturate(130%);
+	--hypr-blur-radius: 14px;
 	--hypr-window-surface: rgba(8, 12, 18, 0.82);
 	--hypr-shadow: 0 9px 28px #00070fb3;
 	--hypr-dim: 0.12;
@@ -51,8 +51,7 @@ body {
 .hypr-dock {
 	border: 1px solid rgba(176, 232, 255, 0.16);
 	background: var(--hypr-surface);
-	backdrop-filter: var(--hypr-blur);
-	-webkit-backdrop-filter: var(--hypr-blur);
+	backdrop-filter: blur(var(--hypr-blur-radius)) saturate(130%);
 	box-shadow: var(--hypr-shadow);
 }
 
@@ -69,8 +68,7 @@ body {
 	position: relative;
 	border-radius: var(--hypr-rounding);
 	background: var(--hypr-window-surface);
-	backdrop-filter: var(--hypr-blur);
-	-webkit-backdrop-filter: var(--hypr-blur);
+	backdrop-filter: blur(var(--hypr-blur-radius)) saturate(130%);
 	box-shadow: var(--hypr-shadow);
 	transition:
 		border-radius var(--hypr-anim-duration) var(--hypr-anim-ease),
@@ -255,6 +253,49 @@ body {
 	.hypr-window::after,
 	.hypr-frame,
 	.hypr-tiled {
+		transition: none;
+	}
+}
+
+/* Capa por ventana: permite deslizar workspaces sin desmontar las ventanas */
+.hypr-ws-layer {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	transition:
+		transform var(--hypr-anim-duration) var(--hypr-anim-ease),
+		opacity var(--hypr-anim-duration) var(--hypr-anim-ease),
+		visibility 0s linear var(--hypr-anim-duration);
+	visibility: hidden;
+}
+
+.hypr-ws-layer[data-visible="true"] {
+	visibility: visible;
+	transition:
+		transform var(--hypr-anim-duration) var(--hypr-anim-ease),
+		opacity var(--hypr-anim-duration) var(--hypr-anim-ease),
+		visibility 0s;
+}
+
+.hypr-ws-layer > * {
+	pointer-events: auto;
+}
+
+.hypr-fullscreen .hypr-window {
+	border-radius: 0;
+}
+
+.hypr-launcher {
+	border-radius: calc(var(--hypr-rounding) + 2px);
+	border: var(--hypr-border-size) solid var(--hypr-accent-solid);
+	background: rgba(8, 12, 18, 0.92);
+	backdrop-filter: blur(var(--hypr-blur-radius)) saturate(130%);
+	box-shadow: var(--hypr-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hypr-ws-layer,
+	.hypr-ws-layer[data-visible="true"] {
 		transition: none;
 	}
 }
