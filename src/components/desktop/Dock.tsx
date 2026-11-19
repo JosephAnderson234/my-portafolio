@@ -1,70 +1,63 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { ComponentType } from "react";
-import {
-    IconBriefcase,
-    IconFolderCode,
-    IconSchool,
-    IconTerminal2,
-    IconTool,
-    IconUserCircle,
-    IconUsers,
-} from "@tabler/icons-react";
-import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
-
-const apps: { id: WindowType; icon: ComponentType<{ size?: number; stroke?: number }>; label: string }[] = [
-    { id: "terminal", icon: IconTerminal2, label: "Terminal" },
-    { id: "about", icon: IconUserCircle, label: "Sobre mí" },
-    { id: "projects", icon: IconFolderCode, label: "Proyectos" },
-    { id: "experience", icon: IconBriefcase, label: "Experiencia" },
-    { id: "education", icon: IconSchool, label: "Educación" },
-    { id: "leadership", icon: IconUsers, label: "Liderazgo" },
-    { id: "skills", icon: IconTool, label: "Habilidades" },
-];
+import { APP_META, DOCK_APPS } from "src/config/apps";
+import { useWindowManager } from "src/context/WindowManagerContext";
 
 export default function Dock() {
-    const { open, focus, windows } = useWindowManager();
+    const { open, windows } = useWindowManager();
 
     return (
-        <motion.div
+        <motion.nav
+            aria-label="Dock de aplicaciones"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
-            className="hypr-dock absolute bottom-3 left-1/2 z-40 -translate-x-1/2 px-3 py-2 sm:bottom-4 sm:px-4 sm:py-2"
+            className="hypr-dock absolute bottom-3 left-1/2 z-40 -translate-x-1/2 px-2 py-1.5 sm:bottom-4 sm:px-3 sm:py-2"
         >
-            <div className="flex gap-1.5 sm:gap-3">
-            {apps.map((app) => {
-                const Icon = app.icon;
-                const isOpen = windows.some((w) => w.id === app.id);
-                const isActive = windows.find((w) => w.id === app.id)?.isActive;
+            <ul className="flex gap-1 sm:gap-2.5">
+                {DOCK_APPS.map((id, i) => {
+                    const { Icon, label } = APP_META[id];
+                    const state = windows.find((w) => w.id === id);
+                    const isActive = state?.isActive ?? false;
 
-                return (
-                    <motion.button
-                        key={app.id}
-                        onClick={() => (isOpen ? focus(app.id) : open(app.id))}
-                        whileHover={{ y: -5, scale: 1.06 }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ type: "spring", stiffness: 340, damping: 20 }}
-                        className={`group relative flex h-12 w-12 items-center justify-center rounded-xl border transition-colors sm:h-14 sm:w-14 ${
-                            isActive
-                                ? "hypr-active-outline bg-cyan-200/15 text-cyan-100"
-                                : "border-white/10 bg-slate-900/40 text-slate-300 hover:border-cyan-200/35 hover:text-cyan-50"
-                        }`}
-                        aria-label={app.label}
-                        title={app.label}
-                    >
-                        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-slate-950/90 px-2 py-1 text-[11px] text-slate-200 opacity-0 shadow-lg backdrop-blur-sm transition-all duration-150 group-hover:-translate-y-0.5 group-hover:opacity-100">
-                            {app.label}
-                        </span>
-                        <Icon size={26} stroke={1.8} />
-                        {isOpen && (
-                            <span className={`hypr-pulse absolute -bottom-1 h-1.5 w-1.5 rounded-full ${isActive ? "bg-cyan-200" : "bg-slate-300"}`} />
-                        )}
-                    </motion.button>
-                );
-            })}
-            </div>
-        </motion.div>
+                    return (
+                        <li key={id}>
+                            <motion.button
+                                onClick={() => open(id)}
+                                whileHover={{ y: -4, scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                transition={{ type: "spring", stiffness: 340, damping: 20 }}
+                                className={`group relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-[calc(var(--hypr-rounding)*0.8)] border transition-colors sm:h-14 sm:w-14 ${
+                                    isActive
+                                        ? "hypr-active-outline bg-white/10 text-slate-50"
+                                        : "border-white/10 bg-slate-900/40 text-slate-300 hover:border-white/25 hover:text-slate-50"
+                                }`}
+                                aria-label={`${label} (Alt+${i + 1})`}
+                                aria-pressed={isActive}
+                            >
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute -top-10 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-slate-950/95 px-2 py-1 text-xs text-slate-100 opacity-0 shadow-lg transition-all duration-150 group-hover:-translate-y-0.5 group-hover:opacity-100 group-focus-visible:opacity-100 sm:block"
+                                >
+                                    {label}
+                                    <span className="ml-1.5 text-slate-400">Alt+{i + 1}</span>
+                                </span>
+                                <Icon size={24} stroke={1.8} />
+                                {state && (
+                                    <span
+                                        aria-hidden
+                                        className={`absolute -bottom-0.5 h-1 rounded-full transition-all ${
+                                            isActive ? "hypr-pulse w-3" : "w-1 bg-slate-400"
+                                        }`}
+                                        style={isActive ? { background: "var(--hypr-accent-solid)" } : undefined}
+                                    />
+                                )}
+                            </motion.button>
+                        </li>
+                    );
+                })}
+            </ul>
+        </motion.nav>
     );
 }

@@ -45,7 +45,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
       <div className="h-full overflow-auto" style={{ fontFamily: "var(--font-ui)" }}>
         <div className="mb-4 flex items-center gap-2">
           <IconFolderCode size={16} stroke={1.8} className="text-cyan-300" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
             Proyectos — {projects.length} en total
           </span>
         </div>
@@ -81,7 +81,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                   className="group relative rounded-xl border border-white/10 bg-slate-900/40 p-4 transition-all hover:border-cyan-200/30 hover:bg-slate-900/60"
                 >
                   {project.featured && (
-                    <span className="absolute right-3 top-3 rounded-full border border-violet-400/30 bg-violet-500/15 px-2 py-0.5 text-[10px] text-violet-300">
+                    <span className="absolute right-3 top-3 rounded-full border border-violet-400/30 bg-violet-500/15 px-2 py-0.5 text-xs text-violet-300">
                       Destacado
                     </span>
                   )}
@@ -97,7 +97,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                     {project.stack.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-md border border-white/8 bg-slate-800/50 px-2 py-0.5 text-[11px] text-slate-300"
+                        className="rounded-md border border-white/8 bg-slate-800/50 px-2 py-0.5 text-xs text-slate-300"
                       >
                         {tech}
                       </span>
@@ -106,7 +106,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
 
                   {/* Footer */}
                   <div className="flex items-center justify-between">
-                    <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${status.color}`}>
+                    <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${status.color}`}>
                       {status.label}
                     </span>
 
@@ -116,7 +116,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                           href={project.repo_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-[11px] text-slate-400 transition-colors hover:border-cyan-200/30 hover:text-cyan-200"
+                          className="flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-xs text-slate-400 transition-colors hover:border-cyan-200/30 hover:text-cyan-200"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <IconBrandGithub size={12} stroke={1.8} />
@@ -128,7 +128,7 @@ export default function ProjectsWindow({ isActive, onClose, onFocus }: Props) {
                           href={project.live_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 rounded-md border border-cyan-400/25 bg-cyan-500/10 px-2 py-1 text-[11px] text-cyan-300 transition-colors hover:bg-cyan-500/20"
+                          className="flex items-center gap-1 rounded-md border border-cyan-400/25 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-300 transition-colors hover:bg-cyan-500/20"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <IconExternalLink size={12} stroke={1.8} />

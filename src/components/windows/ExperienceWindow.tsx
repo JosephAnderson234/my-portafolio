@@ -53,7 +53,7 @@ export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) 
       <div className="h-full overflow-auto" style={{ fontFamily: "var(--font-ui)" }}>
         <div className="mb-4 flex items-center gap-2">
           <IconBriefcase size={16} stroke={1.8} className="text-cyan-300" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
             Experiencia laboral
           </span>
         </div>
@@ -138,7 +138,7 @@ export default function ExperienceWindow({ isActive, onClose, onFocus }: Props) 
                       {exp.stack.map((tech) => (
                         <span
                           key={tech}
-                          className="rounded-md border border-white/8 bg-slate-800/50 px-2 py-0.5 text-[11px] text-slate-300"
+                          className="rounded-md border border-white/8 bg-slate-800/50 px-2 py-0.5 text-xs text-slate-300"
                         >
                           {tech}
                         </span>

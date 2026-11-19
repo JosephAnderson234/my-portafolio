@@ -83,7 +83,7 @@ export default function AboutWindow({ isActive, onClose, onFocus }: Props) {
           transition={{ duration: 0.4, delay: 0.15 }}
           className="mb-4"
         >
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Acerca de</h2>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">Acerca de</h2>
           <p className="text-sm leading-relaxed text-slate-300">{profileData.bio}</p>
         </motion.div>
 
@@ -116,7 +116,7 @@ export default function AboutWindow({ isActive, onClose, onFocus }: Props) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.25 }}
         >
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Enlaces</h2>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">Enlaces</h2>
           <div className="flex flex-wrap gap-2">
             {profileData.links.map((link) => {
               const Icon = iconMap[link.icon] ?? IconBrandGithub;

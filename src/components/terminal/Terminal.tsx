@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { runCommand } from "src/libs/terminalCommands";
+import { runHyprctl } from "src/libs/hyprctl";
+import { useHyprConfig } from "src/context/HyprConfigContext";
 import siteData from "src/data/site.json";
 import profileData from "src/data/profile.json";
 
 export default function Terminal() {
     const prompt = siteData.terminalPrompt;
     const bottomRef = useRef<HTMLDivElement>(null);
+    const { config, setOption } = useHyprConfig();
 
     const [outputHistory, setOutputHistory] = useState<{ type: "input" | "output"; text: string }[]>([
         { type: "output", text: `Welcome to ${siteData.desktopName} — ${siteData.version}` },
@@ -39,7 +42,8 @@ export default function Terminal() {
             return;
         }
 
-        const output = runCommand(command);
+        const [bin, ...args] = command.split(/\s+/);
+        const output = bin === "hyprctl" ? runHyprctl(args, { config, setOption }) : runCommand(command);
 
         setOutputHistory((prev) => [
             ...prev,
@@ -93,6 +97,7 @@ export default function Terminal() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     autoFocus
+                    aria-label="Comando de la terminal"
                     className="flex-1 bg-transparent text-slate-50 outline-none caret-cyan-400"
                     spellCheck={false}
                     autoComplete="off"

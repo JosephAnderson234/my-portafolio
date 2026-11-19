@@ -2,17 +2,24 @@
 
 :root {
 	--hypr-bg: #07090d;
-	--hypr-bg-soft: #0f141d;
-	--hypr-surface: rgba(11, 16, 24, 0.55);
-	--hypr-surface-strong: rgba(9, 14, 21, 0.78);
-	--hypr-window-surface: rgba(8, 12, 18, 0.94);
-	--hypr-border: rgba(176, 232, 255, 0.22);
-	--hypr-border-active: rgba(111, 242, 255, 0.7);
+	--hypr-surface: rgba(11, 16, 24, 0.62);
 	--hypr-text: #e6f5ff;
 	--hypr-text-muted: #93a8bd;
-	--hypr-accent: #76f7f7;
-	--hypr-accent-2: #92ff9f;
-	--hypr-glow: 0 0 0 1px rgba(109, 255, 245, 0.25), 0 10px 40px rgba(0, 13, 22, 0.65);
+
+	/* Valores por defecto; HyprConfigProvider los sobrescribe en vivo */
+	--hypr-gaps-in: 5px;
+	--hypr-gaps-out: 14px;
+	--hypr-border-size: 2px;
+	--hypr-border-active: linear-gradient(135deg, #33ccffee, #00ff99ee);
+	--hypr-border-inactive: #59595980;
+	--hypr-accent-solid: #33ccff;
+	--hypr-rounding: 10px;
+	--hypr-blur: blur(14px) saturate(130%);
+	--hypr-window-surface: rgba(8, 12, 18, 0.82);
+	--hypr-shadow: 0 9px 28px #00070fb3;
+	--hypr-dim: 0.12;
+	--hypr-anim-duration: 250ms;
+	--hypr-anim-ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 * {
@@ -41,30 +48,144 @@ body {
 }
 
 .hypr-panel,
-.hypr-dock,
-.hypr-window {
-	border: 1px solid var(--hypr-border);
+.hypr-dock {
+	border: 1px solid rgba(176, 232, 255, 0.16);
 	background: var(--hypr-surface);
-	backdrop-filter: blur(14px) saturate(130%);
-	-webkit-backdrop-filter: blur(14px) saturate(130%);
-	box-shadow: var(--hypr-glow);
+	backdrop-filter: var(--hypr-blur);
+	-webkit-backdrop-filter: var(--hypr-blur);
+	box-shadow: var(--hypr-shadow);
 }
 
 .hypr-panel {
-	border-radius: 0 0 14px 14px;
+	border-width: 0 0 1px;
 }
 
 .hypr-dock {
-	border-radius: 18px;
+	border-radius: calc(var(--hypr-rounding) + 6px);
 }
 
+/* Ventanas: sin decoraciones de cliente, solo borde + redondeo como Hyprland */
 .hypr-window {
-	border-radius: 14px;
+	position: relative;
+	border-radius: var(--hypr-rounding);
 	background: var(--hypr-window-surface);
+	backdrop-filter: var(--hypr-blur);
+	-webkit-backdrop-filter: var(--hypr-blur);
+	box-shadow: var(--hypr-shadow);
+	transition:
+		border-radius var(--hypr-anim-duration) var(--hypr-anim-ease),
+		box-shadow var(--hypr-anim-duration) var(--hypr-anim-ease);
+}
+
+/* Borde con gradiente (col.active_border) usando máscara para no tapar el fondo translúcido */
+.hypr-window::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	padding: var(--hypr-border-size);
+	border-radius: inherit;
+	background: var(--hypr-border-inactive);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+	pointer-events: none;
+}
+
+.hypr-window[data-active="true"]::before {
+	background: var(--hypr-border-active);
+}
+
+/* dim_inactive */
+.hypr-window::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	border-radius: inherit;
+	background: #000;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--hypr-anim-duration) var(--hypr-anim-ease);
+}
+
+.hypr-window[data-active="false"]::after {
+	opacity: var(--hypr-dim);
+}
+
+.hypr-frame {
+	transition: opacity var(--hypr-anim-duration) var(--hypr-anim-ease);
+}
+
+/* Tiling: animar el reacomodo de tiles como las animaciones "windowsMove" */
+.hypr-tiled {
+	transition:
+		transform var(--hypr-anim-duration) var(--hypr-anim-ease),
+		width var(--hypr-anim-duration) var(--hypr-anim-ease),
+		height var(--hypr-anim-duration) var(--hypr-anim-ease),
+		opacity var(--hypr-anim-duration) var(--hypr-anim-ease);
 }
 
 .hypr-active-outline {
-	border-color: var(--hypr-border-active);
+	border-color: var(--hypr-accent-solid);
+}
+
+/* Foco visible para teclado en todo el escritorio */
+@layer base {
+	:focus-visible {
+		outline: 2px solid var(--hypr-accent-solid);
+		outline-offset: 2px;
+	}
+
+	textarea:focus-visible {
+		outline-offset: -2px;
+	}
+}
+
+.hypr-kbd {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.5rem;
+	padding: 0 0.4rem;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-bottom-width: 2px;
+	border-radius: 6px;
+	background: rgba(15, 23, 42, 0.7);
+	color: #e2e8f0;
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+}
+
+.hypr-range {
+	accent-color: var(--hypr-accent-solid);
+	cursor: pointer;
+}
+
+.hypr-color {
+	width: 2.25rem;
+	height: 1.75rem;
+	padding: 2px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 6px;
+	background: transparent;
+	cursor: pointer;
+}
+
+.hypr-color::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+
+.hypr-color::-webkit-color-swatch {
+	border: none;
+	border-radius: 4px;
+}
+
+.hypr-no-scrollbar {
+	scrollbar-width: none;
+}
+
+.hypr-no-scrollbar::-webkit-scrollbar {
+	display: none;
 }
 
 /* Custom scrollbars for window content */
@@ -123,4 +244,17 @@ body {
 
 .hypr-pulse {
 	animation: hyprPulse 1.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hypr-pulse {
+		animation: none;
+	}
+
+	.hypr-window,
+	.hypr-window::after,
+	.hypr-frame,
+	.hypr-tiled {
+		transition: none;
+	}
 }

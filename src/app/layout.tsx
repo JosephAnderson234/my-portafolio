@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { WindowManagerProvider } from "src/context/WindowManagerContext";
+import { HyprConfigProvider } from "src/context/HyprConfigContext";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
       <body className="overflow-hidden antialiased">
-        <WindowManagerProvider>
-          {children}
-        </WindowManagerProvider>
+        <HyprConfigProvider>
+          <WindowManagerProvider>
+            {children}
+          </WindowManagerProvider>
+        </HyprConfigProvider>
       </body>
     </html>
   );

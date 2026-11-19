@@ -1,9 +1,14 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useWindowManager } from "src/context/WindowManagerContext";
+import type { ComponentType } from "react";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import { useWindowManager, WindowType } from "src/context/WindowManagerContext";
+import { useHyprConfig } from "src/context/HyprConfigContext";
+import { useHyprBinds } from "src/hooks/useHyprBinds";
 import Dock from "./Dock";
 import Panel from "./Panel";
+import Wallpaper from "./Wallpaper";
+import { WindowIdContext } from "../windows/Windows";
 import TerminalWindow from "../windows/TerminalWindows";
 import AboutWindow from "../windows/AboutWindow";
 import ProjectsWindow from "../windows/ProjectsWindow";
@@ -11,181 +16,70 @@ import ExperienceWindow from "../windows/ExperienceWindow";
 import EducationWindow from "../windows/EducationWindow";
 import LeadershipWindow from "../windows/LeadershipWindow";
 import SkillsWindow from "../windows/SkillsWindow";
-import Wallpaper from "./Wallpaper";
+import SettingsWindow from "../windows/SettingsWindow";
 
-const windowVariants = {
-    initial: { opacity: 0, scale: 0.96, y: 14 },
-    animate: { opacity: 1, scale: 1, y: 0 },
-    exit: { opacity: 0, scale: 0.94, y: 18 },
+type WindowProps = { isActive: boolean; onClose: () => void; onFocus: () => void };
+
+const WINDOW_COMPONENTS: Record<WindowType, ComponentType<WindowProps>> = {
+    terminal: TerminalWindow,
+    about: AboutWindow,
+    projects: ProjectsWindow,
+    experience: ExperienceWindow,
+    education: EducationWindow,
+    leadership: LeadershipWindow,
+    skills: SkillsWindow,
+    settings: SettingsWindow,
 };
-
-const transition = { duration: 0.25, ease: "easeOut" } as const;
 
 export default function Desktop() {
     const { windows, close, focus } = useWindowManager();
+    const { motion: m } = useHyprConfig();
+    useHyprBinds();
 
     return (
-        <div className="desktop-root" style={{ fontFamily: "var(--font-ui)" }}>
-            <Wallpaper />
-            <Panel />
+        <MotionConfig reducedMotion={m.enabled ? "user" : "always"}>
+            <div className="desktop-root" style={{ fontFamily: "var(--font-ui)" }}>
+                <Wallpaper />
+                <Panel />
 
-            {/* Desktop hint when no windows are open */}
-            <AnimatePresence>
-                {windows.length === 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5, delay: 0.8 }}
-                        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3"
-                    >
-                        <p className="text-sm text-slate-400" style={{ fontFamily: "var(--font-mono)" }}>
-                            Haz clic en un ícono del dock para abrir una ventana
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                <AnimatePresence>
+                    {windows.length === 0 && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.4, delay: 0.4 }}
+                            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center"
+                        >
+                            <p className="text-sm text-slate-300" style={{ fontFamily: "var(--font-mono)" }}>
+                                Haz clic en un ícono del dock para abrir una ventana
+                            </p>
+                            <p className="hidden text-xs text-slate-400 sm:block" style={{ fontFamily: "var(--font-mono)" }}>
+                                o usa <kbd className="hypr-kbd">Alt</kbd> + <kbd className="hypr-kbd">Enter</kbd> para la
+                                terminal · <kbd className="hypr-kbd">Alt</kbd> + <kbd className="hypr-kbd">S</kbd> para
+                                configurar
+                            </p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            <AnimatePresence>
-                {windows.map((w) => {
-                    if (w.id === "terminal") {
+                <AnimatePresence>
+                    {windows.map((w) => {
+                        const Component = WINDOW_COMPONENTS[w.id];
                         return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <TerminalWindow
+                            <WindowIdContext.Provider key={w.id} value={w.id}>
+                                <Component
                                     isActive={w.isActive}
-                                    onClose={() => close("terminal")}
-                                    onFocus={() => focus("terminal")}
+                                    onClose={() => close(w.id)}
+                                    onFocus={() => focus(w.id)}
                                 />
-                            </motion.div>
+                            </WindowIdContext.Provider>
                         );
-                    }
+                    })}
+                </AnimatePresence>
 
-                    if (w.id === "about") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <AboutWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("about")}
-                                    onFocus={() => focus("about")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    if (w.id === "projects") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <ProjectsWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("projects")}
-                                    onFocus={() => focus("projects")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    if (w.id === "experience") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <ExperienceWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("experience")}
-                                    onFocus={() => focus("experience")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    if (w.id === "education") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <EducationWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("education")}
-                                    onFocus={() => focus("education")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    if (w.id === "leadership") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <LeadershipWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("leadership")}
-                                    onFocus={() => focus("leadership")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    if (w.id === "skills") {
-                        return (
-                            <motion.div
-                                key={w.id}
-                                variants={windowVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={transition}
-                            >
-                                <SkillsWindow
-                                    isActive={w.isActive}
-                                    onClose={() => close("skills")}
-                                    onFocus={() => focus("skills")}
-                                />
-                            </motion.div>
-                        );
-                    }
-
-                    return null;
-                })}
-            </AnimatePresence>
-
-            <Dock />
-        </div>
+                <Dock />
+            </div>
+        </MotionConfig>
     );
 }

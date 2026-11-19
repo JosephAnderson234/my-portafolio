@@ -23,7 +23,7 @@ export default function LeadershipWindow({ isActive, onClose, onFocus }: Props) 
       <div className="h-full overflow-auto" style={{ fontFamily: "var(--font-ui)" }}>
         <div className="mb-4 flex items-center gap-2">
           <IconUsers size={16} stroke={1.8} className="text-cyan-300" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
             Liderazgo y actividades
           </span>
         </div>
@@ -68,7 +68,7 @@ export default function LeadershipWindow({ isActive, onClose, onFocus }: Props) 
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
         >
-          <h2 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <h2 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-400">
             <IconBulb size={13} stroke={2} className="text-amber-300" />
             Intereses
           </h2>

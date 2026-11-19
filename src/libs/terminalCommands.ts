@@ -38,6 +38,7 @@ export function runCommand(cmd: string): string[] {
                 "│  experience    List work experience",
                 "│  education     Show academic background",
                 "│  skills        Show tech skills",
+                "│  hyprctl       Tweak the compositor live (try: hyprctl options)",
                 "│  clear         Clear terminal",
                 "└───────────────────────────────────────────",
             ];
